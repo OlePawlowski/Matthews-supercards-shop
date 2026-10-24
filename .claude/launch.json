@@ -1,0 +1,37 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "supercards",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "dev-server.py",
+        "4173",
+        "website"
+      ],
+      "port": 4173
+    },
+    {
+      "name": "konf-adac",
+      "runtimeExecutable": "php",
+      "runtimeArgs": [
+        "-S",
+        "localhost:8081",
+        "-t",
+        "/Users/olepawlowski/Documents/ Adac-Westfalen-Classic/adac-app"
+      ],
+      "port": 8081
+    },
+    {
+      "name": "konf-creme21",
+      "runtimeExecutable": "php",
+      "runtimeArgs": [
+        "-S",
+        "localhost:8082",
+        "-t",
+        "/Users/olepawlowski/Documents/Creme21-Spielkartengenerator/creme21-app"
+      ],
+      "port": 8082
+    }
+  ]
+}
