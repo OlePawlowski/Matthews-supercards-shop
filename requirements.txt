@@ -1,0 +1,2 @@
+# Shop-Server hat keine externen Abhängigkeiten — nur Standardbibliothek.
+# Datei existiert, damit Render den Service als Python-Web-Service erkennt.

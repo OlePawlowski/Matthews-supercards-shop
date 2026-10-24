@@ -239,7 +239,7 @@ def fuss():
   <div class="wrap foot__legal">
     <p>&copy; <span id="jahr">2026</span> Matthews SuperCards<sup>&reg;</sup></p>
     <nav aria-label="Rechtliches">
-      <a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">AGB</a><a href="#">Widerruf</a><a href="#">Versand &amp; Zahlung</a>
+      <a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="agb.html">AGB</a><a href="widerruf.html">Widerruf</a><a href="versand.html">Versand &amp; Zahlung</a>
     </nav>
   </div>
 </footer>

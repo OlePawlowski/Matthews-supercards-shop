@@ -151,7 +151,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == '__main__':
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 4173
+    port = int(os.environ.get('PORT', sys.argv[1] if len(sys.argv) > 1 else 4173))
     k = schluessel()
     zustand = ('Testmodus' if k.startswith(('sk_test_', 'rk_test_'))
                else 'LIVE-Schlüssel — wird abgewiesen!' if k

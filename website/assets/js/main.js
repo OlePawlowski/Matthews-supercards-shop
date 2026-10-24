@@ -147,31 +147,10 @@
      Mit `demo: true` erscheint wieder der sichtbare Hinweiskasten.
      ════════════════════════════════════════════════════════════════ */
   var BEISPIEL = {
-    demo: false,
-    rating: 4.9,
-    total: 27,
-    reviews: [
-      { author_name: 'Andreas K.', relative_time_description: 'vor 3 Wochen', rating: 5,
-        text: 'Wir haben das Quartett für unsere Ausfahrt machen lassen. Die Crews '
-            + 'konnten ihre Karte selbst gestalten — das war der halbe Spaß schon vor '
-            + 'dem Start. Druck top, Termin gehalten.' },
-      { author_name: 'Sabine R.', relative_time_description: 'vor 2 Monaten', rating: 5,
-        text: 'Ich wollte ein Quartett mit den Autos meines Vaters zum Siebzigsten. '
-            + 'Herr Hellwege hat sich die Zeit genommen, jedes Foto durchzugehen. '
-            + 'Das Ergebnis hat ihn umgehauen.' },
-      { author_name: 'Mirko T.', relative_time_description: 'vor 2 Monaten', rating: 5,
-        text: 'Als Club haben wir schon zweimal nachbestellt. Die Daten liegen dort, '
-            + 'man muss nichts neu erklären. Genau so soll das laufen.' },
-      { author_name: 'Jens B.', relative_time_description: 'vor 4 Monaten', rating: 4,
-        text: 'Sehr schöne Karten, die Schachtel ist ein echter Hingucker. Ein Stern '
-            + 'Abzug nur, weil die Abstimmung über E-Mail lief und etwas gedauert hat.' },
-      { author_name: 'Katrin M.', relative_time_description: 'vor 5 Monaten', rating: 5,
-        text: 'Werbequartett für unsere Werkstatt — komplett in unseren Farben. '
-            + 'Die Kunden nehmen es mit, das schafft kein Flyer.' },
-      { author_name: 'Holger P.', relative_time_description: 'vor 7 Monaten', rating: 5,
-        text: 'Zweitakt-Quartett für unsere Mofa-Runde. 32 Maschinen, jede mit eigener '
-            + 'Karte. Die Qualität ist wie früher, nur besser gedruckt.' }
-    ]
+    demo: true,
+    rating: 0,
+    total: 0,
+reviews: []
   };
 
   function sterne(n) {

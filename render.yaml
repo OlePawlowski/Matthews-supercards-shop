@@ -1,0 +1,35 @@
+# Matthews SuperCards — Render-Konfiguration
+#
+# So einrichten:
+#   1. In Render "New Web Service" → Repository angeben
+#   2. Root Directory: .
+#   3. Environment: Python 3
+#   4. Build Command:  python3 build.py
+#   5. Start Command:  python3 shop-server.py $PORT
+#   6. Environment Variable STRIPE_SECRET_KEY anlegen
+#      (aus dem Stripe-Dashboard, Test-Schlüssel sk_test_…)
+#
+# Der Server liefert die statischen Seiten aus website/ und bedient
+# /api/checkout über Stripe. Die Stripe-Schlüssel stehen nur auf dem
+# Server, nie im ausgelieferten HTML.
+
+version: 1
+
+apiVersion: render.com/v1
+kind: WebService
+
+metadata:
+  name: matthews-supercards-shop
+
+spec:
+  env: python
+  plan: free
+  region: fra
+  buildCommand: python3 build.py
+  startCommand: python3 shop-server.py $PORT
+  envVars:
+    - key: STRIPE_SECRET_KEY
+      # Im Dashboard manuell anlegen, hier nur als Platzhalter.
+      value: ""
+
+  healthCheckPath: /
