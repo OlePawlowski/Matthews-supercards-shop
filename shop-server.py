@@ -103,7 +103,15 @@ class Handler(SimpleHTTPRequestHandler):
         except (TypeError, ValueError):
             menge = 1
 
-        herkunft = self.headers.get('Origin') or 'http://localhost:4173'
+        # Hinter dem Proxy des Hosters kommt die Anfrage per HTTP an,
+        # die öffentliche Adresse ist aber HTTPS — sonst leitet Stripe
+        # nach der Zahlung auf eine tote Adresse zurück.
+        herkunft = self.headers.get('Origin')
+        if not herkunft:
+            wirt = self.headers.get('Host') or 'localhost:4173'
+            schema = self.headers.get('X-Forwarded-Proto') or (
+                'http' if wirt.startswith('localhost') else 'https')
+            herkunft = schema + '://' + wirt
         felder = [
             ('mode', 'payment'),
             ('success_url', herkunft + '/danke.html?sitzung={CHECKOUT_SESSION_ID}'),
@@ -157,5 +165,8 @@ if __name__ == '__main__':
                else 'LIVE-Schlüssel — wird abgewiesen!' if k
                else 'kein Schlüssel hinterlegt')
     print('Shop auf http://localhost:%d  ·  Stripe: %s' % (port, zustand))
-    ThreadingHTTPServer(('127.0.0.1', port),
+    # Lokal nur an den eigenen Rechner binden, beim Hoster an alle
+    # Schnittstellen — sonst erreicht Render den Dienst nicht.
+    host = '0.0.0.0' if os.environ.get('PORT') else '127.0.0.1'
+    ThreadingHTTPServer((host, port),
                         partial(Handler, directory=ORDNER)).serve_forever()
