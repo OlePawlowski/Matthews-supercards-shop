@@ -924,3 +924,6 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 }
 /* Schmale Felder brauchen Platz für ihre Beschriftung */
 .bestell .vfeld--kurz{ flex:0 0 108px }
+.bestell__staffel{ display:block; width:100%; margin-top:4px; font-size:.84rem; color:var(--muted) }
+.bestell__staffel b{ color:var(--marke); font-weight:800 }
+.bestell__klein--oben{ margin:0 0 16px }

@@ -15,8 +15,10 @@ ZIEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'website')
 # TODO Kunde: Preise, Auflagen und Liefertermine sind mit Matthias
 # abzustimmen. Die Freischalttermine stammen aus den Konfiguratoren.
 
-# Preis je Spiel in Euro (brutto). TODO Kunde: für ADAC bestätigen.
-PREIS = {'creme21': 38.40, 'adac': 38.40}
+# Preis je Spiel in Euro (brutto), ab zwei Spielen günstiger.
+# TODO Kunde: Staffel für ADAC bestätigen.
+PREIS       = {'creme21': 34.80, 'adac': 34.80}
+PREIS_AB_2  = {'creme21': 29.60, 'adac': 29.60}
 
 KONFIGURATOREN = {
     'creme21': dict(
@@ -440,7 +442,8 @@ def rallye_uebersicht():
 def rallye_seite(sid):
     k = KONFIGURATOREN[sid]
     q = next(x for x in QUARTETTE if x['konf'] == sid)
-    preis = PREIS.get(sid, 38.40)
+    preis   = PREIS.get(sid, 34.80)
+    preis2  = PREIS_AB_2.get(sid, preis)
     mengen = '\n'.join(
         '              <option value="%d"%s>%d&nbsp;Spiel%s</option>'
         % (n, ' selected' if n == 1 else '', n, '' if n == 1 else 'e')
@@ -482,41 +485,32 @@ def rallye_seite(sid):
         <div><dt>Produktion</dt><dd>14 Tage bis 4 Wochen</dd></div>
       </dl>
 
-      <form class="bestell" id="bestellform" data-preis="%(preis).2f" data-artikel="%(sid)s">
+      <form class="bestell" id="bestellform" data-preis="%(preis).2f" data-preis2="%(preis2).2f" data-artikel="%(sid)s">
         <div class="bestell__preis">
           <span class="bestell__ab">Preis je Spiel</span>
           <b class="bestell__zahl" id="preis">%(preisDE)s&nbsp;&euro;</b>
+          <span class="bestell__staffel">ab 2&nbsp;Spielen <b>%(preis2DE)s&nbsp;&euro;</b> je Spiel</span>
           <span class="bestell__hinweis">zzgl. Versand &middot; Steuer wird im Checkout ausgewiesen</span>
         </div>
 
         <div class="bestell__reihe">
+          <label class="vfeld">
+            <span>Fahrer Nachname *</span>
+            <input type="text" name="name" maxlength="60" placeholder="Hellwege">
+          </label>
           <label class="vfeld vfeld--kurz">
             <span>Start-Nr.</span>
             <input type="text" name="startnr" maxlength="3" inputmode="numeric" placeholder="221">
           </label>
-          <label class="vfeld">
-            <span>Name *</span>
-            <input type="text" name="name" maxlength="60" placeholder="Vor- und Nachname">
-          </label>
         </div>
         <div class="bestell__reihe">
           <label class="vfeld">
-            <span>E-Mail *</span>
+            <span>Ihre E-Mail-Adresse *</span>
             <input type="text" name="email" maxlength="80" inputmode="email">
           </label>
         </div>
-        <div class="bestell__reihe">
-          <label class="vfeld"><span>Stra&szlig;e *</span>
-            <input type="text" name="strasse" maxlength="70"></label>
-          <label class="vfeld vfeld--kurz"><span>Haus-Nr. *</span>
-            <input type="text" name="hausnr" maxlength="10"></label>
-        </div>
-        <div class="bestell__reihe">
-          <label class="vfeld vfeld--kurz"><span>PLZ *</span>
-            <input type="text" name="plz" maxlength="5" inputmode="numeric"></label>
-          <label class="vfeld"><span>Ort *</span>
-            <input type="text" name="ort" maxlength="60"></label>
-        </div>
+        <p class="bestell__klein bestell__klein--oben">Die Lieferanschrift fragen wir im
+          n&auml;chsten Schritt bei der Zahlung ab.</p>
 
         <p class="bestell__summe">Summe: <b id="summe">%(preisDE)s&nbsp;&euro;</b>
           <span id="summehinweis">zzgl. Versand</span></p>
@@ -574,7 +568,8 @@ def rallye_seite(sid):
            unter=e(q['unter']), jahr=e(k['jahr']), besch=e(q['text']),
            start=e(k['start']), kurl=k['url'], kname=e(k['kurz']),
            kurz=e(k['kurz']), preis=preis, preisDE=('%.2f' % preis).replace('.', ','),
-           mengen=mengen, sid=sid) + fuss()
+           mengen=mengen, sid=sid,
+           preis2=preis2, preis2DE=('%.2f' % preis2).replace('.', ',')) + fuss()
 
 
 # ── Navigation in der handgepflegten Startseite nachziehen ───────────────

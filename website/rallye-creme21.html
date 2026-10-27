@@ -101,43 +101,34 @@
         <div><dt>Produktion</dt><dd>14 Tage bis 4 Wochen</dd></div>
       </dl>
 
-      <form class="bestell" id="bestellform" data-preis="38.40" data-artikel="creme21">
+      <form class="bestell" id="bestellform" data-preis="34.80" data-preis2="29.60" data-artikel="creme21">
         <div class="bestell__preis">
           <span class="bestell__ab">Preis je Spiel</span>
-          <b class="bestell__zahl" id="preis">38,40&nbsp;&euro;</b>
+          <b class="bestell__zahl" id="preis">34,80&nbsp;&euro;</b>
+          <span class="bestell__staffel">ab 2&nbsp;Spielen <b>29,60&nbsp;&euro;</b> je Spiel</span>
           <span class="bestell__hinweis">zzgl. Versand &middot; Steuer wird im Checkout ausgewiesen</span>
         </div>
 
         <div class="bestell__reihe">
+          <label class="vfeld">
+            <span>Fahrer Nachname *</span>
+            <input type="text" name="name" maxlength="60" placeholder="Hellwege">
+          </label>
           <label class="vfeld vfeld--kurz">
             <span>Start-Nr.</span>
             <input type="text" name="startnr" maxlength="3" inputmode="numeric" placeholder="221">
           </label>
-          <label class="vfeld">
-            <span>Name *</span>
-            <input type="text" name="name" maxlength="60" placeholder="Vor- und Nachname">
-          </label>
         </div>
         <div class="bestell__reihe">
           <label class="vfeld">
-            <span>E-Mail *</span>
+            <span>Ihre E-Mail-Adresse *</span>
             <input type="text" name="email" maxlength="80" inputmode="email">
           </label>
         </div>
-        <div class="bestell__reihe">
-          <label class="vfeld"><span>Stra&szlig;e *</span>
-            <input type="text" name="strasse" maxlength="70"></label>
-          <label class="vfeld vfeld--kurz"><span>Haus-Nr. *</span>
-            <input type="text" name="hausnr" maxlength="10"></label>
-        </div>
-        <div class="bestell__reihe">
-          <label class="vfeld vfeld--kurz"><span>PLZ *</span>
-            <input type="text" name="plz" maxlength="5" inputmode="numeric"></label>
-          <label class="vfeld"><span>Ort *</span>
-            <input type="text" name="ort" maxlength="60"></label>
-        </div>
+        <p class="bestell__klein bestell__klein--oben">Die Lieferanschrift fragen wir im
+          n&auml;chsten Schritt bei der Zahlung ab.</p>
 
-        <p class="bestell__summe">Summe: <b id="summe">38,40&nbsp;&euro;</b>
+        <p class="bestell__summe">Summe: <b id="summe">34,80&nbsp;&euro;</b>
           <span id="summehinweis">zzgl. Versand</span></p>
 
         <div class="bestell__buchen">
@@ -237,7 +228,7 @@
   <div class="wrap foot__legal">
     <p>&copy; <span id="jahr">2026</span> Matthews SuperCards<sup>&reg;</sup></p>
     <nav aria-label="Rechtliches">
-      <a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">AGB</a><a href="#">Widerruf</a><a href="#">Versand &amp; Zahlung</a>
+      <a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="agb.html">AGB</a><a href="widerruf.html">Widerruf</a><a href="versand.html">Versand &amp; Zahlung</a>
     </nav>
   </div>
 </footer>

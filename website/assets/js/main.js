@@ -387,6 +387,7 @@ reviews: []
   if (bestell) {
     // Preis steht am Formular, damit er nur an einer Stelle gepflegt wird
     var einzel  = parseFloat(bestell.dataset.preis || '0') || 0;
+    var einzel2 = parseFloat(bestell.dataset.preis2 || '0') || einzel;
     var mengeF  = $('#menge');
     var summeF  = $('#summe');
     var statusF = $('#bestellstatus');
@@ -395,7 +396,16 @@ reviews: []
       return n.toFixed(2).replace('.', ',') + '\u00A0\u20AC';
     };
     var menge = function () { return parseInt(mengeF.value, 10) || 1; };
-    var rechne = function () { summeF.textContent = euro(einzel * menge()); };
+    // Ab zwei Spielen gilt der günstigere Stückpreis
+    var stueck = function () { return menge() >= 2 ? einzel2 : einzel; };
+    var rechne = function () {
+      var m = menge();
+      summeF.textContent = euro(stueck() * m);
+      var h = $('#summehinweis');
+      if (h) h.textContent = m >= 2
+        ? 'zzgl. Versand · ' + euro(einzel2) + ' je Spiel'
+        : 'zzgl. Versand';
+    };
     mengeF.addEventListener('change', rechne);
     rechne();
 
@@ -417,11 +427,11 @@ reviews: []
       ev.preventDefault();
       var d = new FormData(bestell);
       var hole = function (k) { return String(d.get(k) || '').trim(); };
-      var pflicht = ['name', 'email', 'strasse', 'hausnr', 'plz', 'ort'];
+      var pflicht = ['name', 'email'];
       var fehlt = pflicht.filter(function (k) { return !hole(k); });
 
       if (fehlt.length) {
-        melde('Bitte Name, E-Mail und die vollständige Lieferanschrift ausfüllen.', 'fehler');
+        melde('Bitte Fahrer-Nachname und E-Mail-Adresse ausfüllen.', 'fehler');
         var erstes = bestell.querySelector('[name="' + fehlt[0] + '"]');
         if (erstes) erstes.focus();
         return;
@@ -431,12 +441,6 @@ reviews: []
         bestell.querySelector('[name=email]').focus();
         return;
       }
-      if (hole('plz').length !== 5) {
-        melde('Die Postleitzahl braucht fünf Ziffern.', 'fehler');
-        bestell.querySelector('[name=plz]').focus();
-        return;
-      }
-
       var knopf = bestell.querySelector('button[type=submit]');
       var beschriftung = knopf.textContent;
       knopf.disabled = true;
