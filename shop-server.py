@@ -132,6 +132,9 @@ class Handler(SimpleHTTPRequestHandler):
             ('shipping_options[0][shipping_rate_data][fixed_amount][amount]', str(VERSAND_CENT)),
             ('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'eur'),
             ('automatic_tax[enabled]', 'false'),
+            # Welche Zahlungsarten erscheinen, steuert seit 2025 allein das
+            # Stripe-Dashboard (Einstellungen → Zahlungsmethoden). Der
+            # Parameter payment_method_types wird nicht mehr angenommen.
         ]
         # Angaben aus dem Formular als Notiz an die Zahlung hängen
         for name in ('startnr', 'name'):

@@ -22,12 +22,7 @@
 
 <div class="topbar">
   <div class="wrap topbar__in">
-    <p class="topbar__claim"><b>Matthews SuperCards<sup>&reg;</sup></b> — Quartett-Manufaktur, Oldenburg</p>
-    <ul class="topbar__meta">
-      <li>Eigene Gestaltung</li>
-      <li>Druck &amp; Konfektionierung</li>
-      <li><a href="tel:+494412332252">0441 / 23 32 252</a></li>
-    </ul>
+    <p class="topbar__claim">Spielkartenmanufaktur Oldenburg</p>
   </div>
 </div>
 
@@ -38,30 +33,20 @@
     </a>
     <!-- NAV:START -->
     <nav class="nav" aria-label="Hauptnavigation">
-      <a href="index.html#angebot">Angebot</a>
       <a href="rallyes.html" class="is-cur">Rallyes</a>
       <a href="index.html#konfigurator">Konfigurator</a>
-      <a href="archiv.html">Archiv</a>
-      <a href="index.html#matthias">Über uns</a>
       <a href="index.html#unternehmen">Unternehmen</a>
     </nav>
     <!-- NAV:END -->
-    <div class="head__act">
-      <a class="btn btn--marke" href="rallyes.html">Quartett bestellen</a>
-    </div>
     <button class="burger" id="burger" aria-expanded="false" aria-controls="mobnav" aria-label="Men&uuml; &ouml;ffnen">
       <span></span><span></span><span></span>
     </button>
   </div>
   <!-- MOBNAV:START -->
   <div class="mobnav" id="mobnav" hidden>
-    <a href="index.html#angebot">Angebot</a>
     <a href="rallyes.html" class="is-cur">Rallyes</a>
     <a href="index.html#konfigurator">Konfigurator</a>
-    <a href="archiv.html">Archiv</a>
-    <a href="index.html#matthias">Über uns</a>
     <a href="index.html#unternehmen">Unternehmen</a>
-    <a class="btn btn--marke" href="rallyes.html">Quartett bestellen</a>
   </div>
   <!-- MOBNAV:END -->
 </header>
@@ -71,9 +56,16 @@
 <section class="sec produkt" id="bestellen">
   <div class="wrap produkt__in">
 
-    <figure class="produkt__bild">
-      <img src="assets/img/q-adac.jpg" alt="Quartettkarte ADAC Westfalen Classic" width="560" height="850">
-    </figure>
+    <div class="produkt__bilder">
+      <figure class="produkt__bild">
+        <img src="assets/img/q-adac.jpg" alt="Quartettkarte ADAC Westfalen Classic" width="560" height="850">
+        <figcaption>Schuber</figcaption>
+      </figure>
+      <figure class="produkt__bild produkt__bild--karte">
+        <img src="assets/img/q-adac.jpg" alt="Spielkarte der ADAC Westfalen Classic" width="560" height="851">
+        <figcaption>Deine Spielkarte</figcaption>
+      </figure>
+    </div>
 
     <div class="produkt__text">
       <p class="tag tag--flagge">
@@ -92,23 +84,24 @@
       </p>
       <h1>ADAC Westfalen Classic</h1>
       <p class="produkt__unter">7. Int. ADAC Classic Tour &middot; Ausgabe 2026</p>
-      <p class="sec__lead">Hier zum Teilnehmerquartett der ADAC Westfalen Classic. Bestellt hier euer
-        eigenes, einmaliges Spiel im Schuber mit eurer Startnummer, sowie eurer eigenen
-        Spielkarte als Aufsteller.</p>
-
-      <dl class="specs specs--hell">
-        <div><dt>Karten je Spiel</dt><dd>32</dd></div>
-        <div><dt>Produktion</dt><dd>14 Tage bis 4 Wochen</dd></div>
-      </dl>
+      <p class="sec__lead">Hier bestellst du dein eigenes Spiel. Das f&uuml;r dich
+        angefertigte Einzelst&uuml;ck, im passenden Schuber mit deiner pers&ouml;nlichen
+        Spielkarte als Aussteller dabei.</p>
 
       <form class="bestell" id="bestellform" data-preis="34.80" data-preis2="29.60" data-artikel="adac">
         <div class="bestell__preis">
-          <span class="bestell__ab">Preis je Spiel</span>
-          <b class="bestell__zahl" id="preis">34,80&nbsp;&euro;</b>
-          <span class="bestell__staffel">ab 2&nbsp;Spielen <b>29,60&nbsp;&euro;</b> je Spiel</span>
-          <span class="bestell__hinweis">zzgl. Versand &middot; Steuer wird im Checkout ausgewiesen</span>
+          <span class="bestell__ab">Einzelpreis</span>
+          <b class="bestell__zahl" id="preis">ab 34,80&nbsp;&euro;</b>
+          <span class="bestell__staffel">Ab 2&nbsp;Spielen <b>29,60&nbsp;&euro;</b> pro Spiel</span>
+          <span class="bestell__hinweis">zzgl. Versand</span>
         </div>
 
+        <div class="bestell__reihe">
+          <label class="vfeld">
+            <span>Deine E-Mail-Adresse *</span>
+            <input type="text" name="email" maxlength="80" inputmode="email">
+          </label>
+        </div>
         <div class="bestell__reihe">
           <label class="vfeld">
             <span>Fahrer Nachname *</span>
@@ -117,12 +110,6 @@
           <label class="vfeld vfeld--kurz">
             <span>Start-Nr.</span>
             <input type="text" name="startnr" maxlength="3" inputmode="numeric" placeholder="221">
-          </label>
-        </div>
-        <div class="bestell__reihe">
-          <label class="vfeld">
-            <span>Ihre E-Mail-Adresse *</span>
-            <input type="text" name="email" maxlength="80" inputmode="email">
           </label>
         </div>
         <p class="bestell__klein bestell__klein--oben">Die Lieferanschrift fragen wir im
@@ -151,8 +138,6 @@
         </div>
 
         <p class="bestell__status" id="bestellstatus" hidden></p>
-        <p class="bestell__klein">Wir best&auml;tigen jede Bestellung von Hand und melden uns
-          mit dem genauen Liefertermin. Druck startet, sobald der Upload geschlossen ist.</p>
       </form>
     </div>
   </div>

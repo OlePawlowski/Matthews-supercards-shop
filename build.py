@@ -18,6 +18,8 @@ ZIEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'website')
 # Preis je Spiel in Euro (brutto), ab zwei Spielen günstiger.
 # TODO Kunde: Staffel für ADAC bestätigen.
 PREIS       = {'creme21': 34.80, 'adac': 34.80}
+# Die Spielkarte selbst — neben dem Schuber auf der Produktseite
+KARTE       = {'creme21': 'karte-creme21.jpg', 'adac': 'q-adac.jpg'}
 PREIS_AB_2  = {'creme21': 29.60, 'adac': 29.60}
 
 KONFIGURATOREN = {
@@ -107,11 +109,8 @@ ART_NAME = {'rallye': 'Rallye-Quartett', 'thema': 'Themen-Quartett',
             'marke': 'Marken-Quartett'}
 
 NAV = [
-    ('index.html#angebot',      'Angebot'),
     ('rallyes.html',            'Rallyes'),
     ('index.html#konfigurator', 'Konfigurator'),
-    ('archiv.html',             'Archiv'),
-    ('index.html#matthias',     'Über uns'),
     ('index.html#unternehmen',  'Unternehmen'),
 ]
 
@@ -161,12 +160,7 @@ def kopf(titel, beschreibung, aktiv, favicon_pfad='assets/img/favicon.svg'):
 
 <div class="topbar">
   <div class="wrap topbar__in">
-    <p class="topbar__claim"><b>Matthews SuperCards<sup>&reg;</sup></b> — Quartett-Manufaktur, Oldenburg</p>
-    <ul class="topbar__meta">
-      <li>Eigene Gestaltung</li>
-      <li>Druck &amp; Konfektionierung</li>
-      <li><a href="tel:%(tell)s">%(tela)s</a></li>
-    </ul>
+    <p class="topbar__claim">Spielkartenmanufaktur Oldenburg</p>
   </div>
 </div>
 
@@ -180,9 +174,6 @@ def kopf(titel, beschreibung, aktiv, favicon_pfad='assets/img/favicon.svg'):
       %(nav)s
     </nav>
     <!-- NAV:END -->
-    <div class="head__act">
-      <a class="btn btn--marke" href="rallyes.html">Quartett bestellen</a>
-    </div>
     <button class="burger" id="burger" aria-expanded="false" aria-controls="mobnav" aria-label="Men&uuml; &ouml;ffnen">
       <span></span><span></span><span></span>
     </button>
@@ -190,7 +181,6 @@ def kopf(titel, beschreibung, aktiv, favicon_pfad='assets/img/favicon.svg'):
   <!-- MOBNAV:START -->
   <div class="mobnav" id="mobnav" hidden>
     %(mobnav)s
-    <a class="btn btn--marke" href="rallyes.html">Quartett bestellen</a>
   </div>
   <!-- MOBNAV:END -->
 </header>
@@ -443,6 +433,7 @@ def rallye_seite(sid):
     k = KONFIGURATOREN[sid]
     q = next(x for x in QUARTETTE if x['konf'] == sid)
     preis   = PREIS.get(sid, 34.80)
+    karte   = KARTE.get(sid, q['bild'])
     preis2  = PREIS_AB_2.get(sid, preis)
     mengen = '\n'.join(
         '              <option value="%d"%s>%d&nbsp;Spiel%s</option>'
@@ -455,9 +446,16 @@ def rallye_seite(sid):
 <section class="sec produkt" id="bestellen">
   <div class="wrap produkt__in">
 
-    <figure class="produkt__bild">
-      <img src="assets/img/%(bild)s" alt="%(alt)s" width="560" height="850">
-    </figure>
+    <div class="produkt__bilder">
+      <figure class="produkt__bild">
+        <img src="assets/img/%(bild)s" alt="%(alt)s" width="560" height="850">
+        <figcaption>Schuber</figcaption>
+      </figure>
+      <figure class="produkt__bild produkt__bild--karte">
+        <img src="assets/img/%(karte)s" alt="Spielkarte der %(kurz)s" width="560" height="851">
+        <figcaption>Deine Spielkarte</figcaption>
+      </figure>
+    </div>
 
     <div class="produkt__text">
       <p class="tag tag--flagge">
@@ -476,23 +474,24 @@ def rallye_seite(sid):
       </p>
       <h1>%(titel)s</h1>
       <p class="produkt__unter">%(unter)s &middot; Ausgabe %(jahr)s</p>
-      <p class="sec__lead">Hier zum Teilnehmerquartett der %(kurz)s. Bestellt hier euer
-        eigenes, einmaliges Spiel im Schuber mit eurer Startnummer, sowie eurer eigenen
-        Spielkarte als Aufsteller.</p>
-
-      <dl class="specs specs--hell">
-        <div><dt>Karten je Spiel</dt><dd>32</dd></div>
-        <div><dt>Produktion</dt><dd>14 Tage bis 4 Wochen</dd></div>
-      </dl>
+      <p class="sec__lead">Hier bestellst du dein eigenes Spiel. Das f&uuml;r dich
+        angefertigte Einzelst&uuml;ck, im passenden Schuber mit deiner pers&ouml;nlichen
+        Spielkarte als Aussteller dabei.</p>
 
       <form class="bestell" id="bestellform" data-preis="%(preis).2f" data-preis2="%(preis2).2f" data-artikel="%(sid)s">
         <div class="bestell__preis">
-          <span class="bestell__ab">Preis je Spiel</span>
-          <b class="bestell__zahl" id="preis">%(preisDE)s&nbsp;&euro;</b>
-          <span class="bestell__staffel">ab 2&nbsp;Spielen <b>%(preis2DE)s&nbsp;&euro;</b> je Spiel</span>
-          <span class="bestell__hinweis">zzgl. Versand &middot; Steuer wird im Checkout ausgewiesen</span>
+          <span class="bestell__ab">Einzelpreis</span>
+          <b class="bestell__zahl" id="preis">ab %(preisDE)s&nbsp;&euro;</b>
+          <span class="bestell__staffel">Ab 2&nbsp;Spielen <b>%(preis2DE)s&nbsp;&euro;</b> pro Spiel</span>
+          <span class="bestell__hinweis">zzgl. Versand</span>
         </div>
 
+        <div class="bestell__reihe">
+          <label class="vfeld">
+            <span>Deine E-Mail-Adresse *</span>
+            <input type="text" name="email" maxlength="80" inputmode="email">
+          </label>
+        </div>
         <div class="bestell__reihe">
           <label class="vfeld">
             <span>Fahrer Nachname *</span>
@@ -501,12 +500,6 @@ def rallye_seite(sid):
           <label class="vfeld vfeld--kurz">
             <span>Start-Nr.</span>
             <input type="text" name="startnr" maxlength="3" inputmode="numeric" placeholder="221">
-          </label>
-        </div>
-        <div class="bestell__reihe">
-          <label class="vfeld">
-            <span>Ihre E-Mail-Adresse *</span>
-            <input type="text" name="email" maxlength="80" inputmode="email">
           </label>
         </div>
         <p class="bestell__klein bestell__klein--oben">Die Lieferanschrift fragen wir im
@@ -526,8 +519,6 @@ def rallye_seite(sid):
         </div>
 
         <p class="bestell__status" id="bestellstatus" hidden></p>
-        <p class="bestell__klein">Wir best&auml;tigen jede Bestellung von Hand und melden uns
-          mit dem genauen Liefertermin. Druck startet, sobald der Upload geschlossen ist.</p>
       </form>
     </div>
   </div>
@@ -569,7 +560,8 @@ def rallye_seite(sid):
            start=e(k['start']), kurl=k['url'], kname=e(k['kurz']),
            kurz=e(k['kurz']), preis=preis, preisDE=('%.2f' % preis).replace('.', ','),
            mengen=mengen, sid=sid,
-           preis2=preis2, preis2DE=('%.2f' % preis2).replace('.', ',')) + fuss()
+           preis2=preis2, preis2DE=('%.2f' % preis2).replace('.', ','),
+           karte=karte) + fuss()
 
 
 # ── Navigation in der handgepflegten Startseite nachziehen ───────────────

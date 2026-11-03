@@ -45,6 +45,11 @@
   --wrap: 1280px;
   --pad: clamp(20px,4vw,48px);
   --sec-y: clamp(68px,8.5vw,124px);
+  /* Eckenradius — Kundenwunsch: alle Rechtecke als runde Fenster */
+  --rund:    12px;
+  --rund-s:   8px;
+  --rund-xl: 18px;
+
   --fx: cubic-bezier(.22,.75,.28,1);
   color-scheme: light;
 }
@@ -927,3 +932,70 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 .bestell__staffel{ display:block; width:100%; margin-top:4px; font-size:.84rem; color:var(--muted) }
 .bestell__staffel b{ color:var(--marke); font-weight:800 }
 .bestell__klein--oben{ margin:0 0 16px }
+
+
+/* ── Runde Fenster: alle rechteckigen Flächen bekommen Radien ─── */
+
+.btn,.filt,.vbtn{ border-radius:var(--rund-s) }
+.prod,.wahl__weg,.qk2,.rk,.ablauf__s,.rez,.b2b__form,.bestell,
+.konf__screen,.produkt__bild,.kopfsec,.gen{ border-radius:var(--rund) }
+.wahl__bild,.prod__stage,.rk__bild,.qk2__bild,.ablauf__s figure{
+  border-radius:var(--rund) var(--rund) 0 0 }
+.hero__fig img,.craft__fig img,.matthias__card img,.produkt__bild img,
+.qk2__bild img,.rk__bild img,.ablauf__s img{ border-radius:var(--rund-s) }
+.vfeld input[type=text],.vfeld select,.bestell textarea,.b2b__form select,
+.b2b__form textarea,.vfeld--menge select{ border-radius:var(--rund-s) }
+.tag__id,.qm,.rez__ava,.karussell__pf,.topbar__ruf{ border-radius:var(--rund-s) }
+.tvals,.specs{ border-radius:0 }
+.bestell__status,.b2b__status,.rk__stand,.bew__hinweis{
+  border-radius:0 var(--rund-s) var(--rund-s) 0 }
+.rufleiste a:first-child{ border-radius:var(--rund) 0 0 0 }
+.rufleiste a:last-child{ border-radius:0 var(--rund) 0 0 }
+
+/* ── Hero als Vollbild (Kundenwunsch) ──────────────────────────
+   Das Flyer-Motiv füllt den Bildschirm, darüber nur noch die
+   Überschrift und die Sternauflistung.                        */
+
+.hero--voll{ position:relative; min-height:clamp(520px,84vh,760px);
+  display:flex; align-items:center; overflow:hidden; background:var(--ink) }
+.hero__grund{ position:absolute; inset:0;
+  background:url('../img/flyer-cards.jpg') center/cover no-repeat }
+.hero__grund::after{ content:''; position:absolute; inset:0;
+  background:linear-gradient(100deg, rgba(14,14,17,.88) 0%, rgba(14,14,17,.72) 46%,
+    rgba(14,14,17,.34) 100%) }
+.hero--voll .hero__in{ position:relative; display:block;
+  padding-block:clamp(48px,7vw,96px) }
+.hero--voll .hero__copy{ max-width:760px; display:block }
+.hero--voll h1{ color:var(--paper); font-size:clamp(2.4rem,7vw,5rem);
+  line-height:1.02; letter-spacing:-.04em; text-transform:none }
+.hero--voll h1 s{ color:var(--marke); text-decoration-thickness:.07em }
+.hero--voll h1 sup{ color:var(--gelb); font-size:.42em; top:-.6em; margin-left:.04em }
+
+.hero__stern{ list-style:none; display:flex; flex-wrap:wrap; gap:8px 10px;
+  margin:clamp(22px,3vw,34px) 0 0; padding:0 }
+.hero__stern li{ position:relative; padding:9px 16px 9px 30px;
+  background:rgba(243,239,230,.1); border:1px solid rgba(243,239,230,.26);
+  border-radius:var(--rund-s); color:var(--paper);
+  font-size:clamp(.86rem,1.5vw,1rem); font-weight:700; letter-spacing:.02em }
+.hero__stern li::before{ content:'*'; position:absolute; left:13px; top:11px;
+  color:var(--gelb); font-weight:900; font-size:1.1em; line-height:1 }
+.hero--voll .hero__act{ margin:clamp(28px,3.4vw,40px) 0 0 }
+
+@media (max-width:860px){
+  .hero--voll{ min-height:auto }
+  .hero--voll .hero__copy{ display:block }
+  .hero--voll .hero__act .btn{ width:100% }
+}
+/* Das leere Band bleibt als farbiger Trenner stehen */
+.tape span:empty{ padding-block:13px }
+
+/* ── Produktseite: Schuber und Spielkarte nebeneinander ───────── */
+.produkt__bilder{ position:sticky; top:100px; display:grid; gap:14px }
+.produkt__bild{ margin:0; padding:clamp(16px,2.2vw,26px); background:var(--surface-2);
+  border:1px solid var(--line); display:grid; place-items:center; position:static }
+.produkt__bild img{ width:100%; height:auto; box-shadow:0 16px 34px rgba(23,22,15,.22) }
+.produkt__bild figcaption{ margin-top:12px; font-size:.66rem; font-weight:800;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--muted) }
+@media (min-width:861px){ .produkt__bilder{ grid-template-columns:1fr 1fr } }
+@media (max-width:860px){ .produkt__bilder{ position:static; grid-template-columns:1fr 1fr } }
+@media (max-width:520px){ .produkt__bilder{ grid-template-columns:1fr } }
