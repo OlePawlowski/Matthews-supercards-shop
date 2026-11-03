@@ -19,7 +19,7 @@ ZIEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'website')
 # TODO Kunde: Staffel für ADAC bestätigen.
 PREIS       = {'creme21': 34.80, 'adac': 34.80}
 # Die Spielkarte selbst — neben dem Schuber auf der Produktseite
-KARTE       = {'creme21': 'karte-creme21.jpg', 'adac': 'q-adac.jpg'}
+KARTE       = {'creme21': 'karte-creme21.png', 'adac': 'q-adac.jpg'}
 PREIS_AB_2  = {'creme21': 29.60, 'adac': 29.60}
 
 KONFIGURATOREN = {
