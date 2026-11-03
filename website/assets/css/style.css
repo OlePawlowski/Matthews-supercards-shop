@@ -8,6 +8,13 @@
    Karten- und Werkbankfarben stammen aus dem Flyer.
    ═══════════════════════════════════════════════════════════════ */
 
+/* Handschrift aus dem Konfigurator — hält Shop und Generator zusammen */
+@font-face{
+  font-family:'Birthstone';
+  src:url('../fonts/Birthstone-Regular.ttf') format('truetype');
+  font-weight:400; font-style:normal; font-display:swap;
+}
+
 :root{
   /* — aus creme21-frontend.html — */
   --paper:      #EFEADA;
@@ -40,6 +47,7 @@
 
   --f-disp: "Arial Black","Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
   --f-body: system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-hand: 'Birthstone', 'Segoe Script', cursive;
   --f-mono: ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
 
   --wrap: 1280px;
@@ -999,3 +1007,75 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 @media (min-width:861px){ .produkt__bilder{ grid-template-columns:1fr 1fr } }
 @media (max-width:860px){ .produkt__bilder{ position:static; grid-template-columns:1fr 1fr } }
 @media (max-width:520px){ .produkt__bilder{ grid-template-columns:1fr } }
+
+/* ── Kopfzeile: Claim neben dem Logo (schwarzer Balken entfällt) ── */
+.head__claim{ flex:none; padding-left:16px; margin-left:4px;
+  border-left:1px solid var(--line);
+  font-size:.72rem; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); white-space:nowrap }
+@media (max-width:760px){ .head__claim{ display:none } }
+
+/* ── Hero: Fahrzeug weiß, roter Wischer von Hand ───────────────── */
+.hero--voll h1 .streich{ position:relative; display:inline-block;
+  color:var(--paper) }
+.wischer{ position:absolute; left:-3%; top:52%; width:106%; height:.46em;
+  overflow:visible; pointer-events:none }
+.wischer path{ fill:none; stroke:var(--marke); stroke-width:7;
+  stroke-linecap:round; vector-effect:non-scaling-stroke;
+  /* leichte Unregelmäßigkeit, damit der Strich gezogen wirkt */
+  filter:drop-shadow(0 1px 0 rgba(205,23,25,.55)) }
+.hero--voll h1 sup{ color:var(--marke) }
+
+/* Kategorien in der Handschrift des Konfigurators, Sterne rot */
+.hero__stern li{ font-family:var(--f-hand); font-weight:400;
+  font-size:clamp(1.5rem,3.4vw,2.2rem); letter-spacing:0;
+  padding:4px 18px 8px 34px; line-height:1.1 }
+.hero__stern li::before{ color:var(--marke); top:50%; transform:translateY(-55%);
+  font-size:1.5em }
+/* Nur noch ein Angebotsweg — Kachel mittig statt zweispaltig */
+.wahl__grid{ grid-template-columns:minmax(0,520px); justify-content:center }
+
+/* Zweiter Knopf: hellgrau mit heller Schrift */
+.btn--grau{ --bg:#8B8B86; --bd:#8B8B86; --fg:#fff }
+.btn--grau:hover{ --bg:#76766F; --bd:#76766F; --fg:#fff }
+
+/* ── Zusatzoption Aufsteller ────────────────────────────────── */
+.zusatz{ display:flex; align-items:flex-start; gap:12px; margin:4px 0 18px;
+  padding:14px 16px; background:var(--feld); border:2px solid var(--line);
+  border-radius:var(--rund-s); cursor:pointer; transition:border-color .18s }
+.zusatz:hover{ border-color:var(--ink) }
+.zusatz:has(input:checked){ border-color:var(--marke); background:#fff }
+.zusatz input{ width:20px; height:20px; margin:2px 0 0; flex:none; accent-color:var(--marke) }
+.zusatz__text{ flex:1; display:flex; flex-direction:column; gap:3px }
+.zusatz__text b{ font-size:.92rem }
+.zusatz__text span{ font-size:.82rem; line-height:1.45; color:var(--muted) }
+.zusatz__preis{ flex:none; font-family:var(--f-disp); font-size:1.06rem;
+  letter-spacing:-.02em; color:var(--marke) }
+
+/* ── Vorschau vor der Bestellung ────────────────────────────── */
+.vorschau2{ margin-top:4px; padding-top:20px; border-top:2px solid var(--ink) }
+.vorschau2__titel{ margin:0 0 16px; font-size:.68rem; font-weight:800;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--muted) }
+.vorschau2__karten{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:14px; margin-bottom:18px }
+.vorschau2__karten figure{ margin:0; text-align:center }
+.vorschau2__karten img{ width:100%; height:auto; border-radius:var(--rund-s);
+  box-shadow:0 10px 22px rgba(23,22,15,.2) }
+.vorschau2__karten figcaption{ margin-top:8px; font-size:.68rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
+.vorschau2__pers{ position:relative }
+.vorschau2__band{ position:absolute; left:8%; right:8%; bottom:22%;
+  display:flex; align-items:center; gap:6px; padding:5px 8px;
+  background:var(--ink); color:var(--paper); border-radius:4px;
+  font-size:.62rem; overflow:hidden }
+.vorschau2__band b{ flex:none; font-family:var(--f-disp); letter-spacing:-.02em }
+.vorschau2__band i{ font-style:normal; font-weight:700; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis }
+.vorschau2__summe{ margin:0 0 16px; font-size:.8rem; font-weight:800;
+  letter-spacing:.1em; text-transform:uppercase }
+.vorschau2__summe b{ font-family:var(--f-disp); font-size:1.5rem;
+  letter-spacing:-.03em; text-transform:none }
+.vorschau2__summe span{ font-weight:400; letter-spacing:0; text-transform:none; color:var(--muted) }
+.vorschau2__act{ display:flex; gap:11px; flex-wrap:wrap }
+.vorschau2__act .btn--ghost{ flex:0 0 auto }
+.vorschau2__act .btn--lg{ flex:1 1 220px; width:auto }

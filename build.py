@@ -15,12 +15,12 @@ ZIEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'website')
 # TODO Kunde: Preise, Auflagen und Liefertermine sind mit Matthias
 # abzustimmen. Die Freischalttermine stammen aus den Konfiguratoren.
 
-# Preis je Spiel in Euro (brutto), ab zwei Spielen günstiger.
-# TODO Kunde: Staffel für ADAC bestätigen.
-PREIS       = {'creme21': 34.80, 'adac': 34.80}
+# Preise in Euro (brutto). TODO Kunde: für ADAC bestätigen.
+PREIS       = {'creme21': 29.40, 'adac': 29.40}
+# Aufsteller mit personalisierter Karte — als Zusatz wählbar
+PREIS_AUFST = {'creme21':  7.40, 'adac':  7.40}
 # Die Spielkarte selbst — neben dem Schuber auf der Produktseite
 KARTE       = {'creme21': 'karte-creme21.png', 'adac': 'q-adac.jpg'}
-PREIS_AB_2  = {'creme21': 29.60, 'adac': 29.60}
 
 KONFIGURATOREN = {
     'creme21': dict(
@@ -110,8 +110,9 @@ ART_NAME = {'rallye': 'Rallye-Quartett', 'thema': 'Themen-Quartett',
 
 NAV = [
     ('rallyes.html',            'Rallyes'),
-    ('index.html#konfigurator', 'Konfigurator'),
-    ('index.html#unternehmen',  'Unternehmen'),
+    # Auf Kundenwunsch vorerst ausgeblendet:
+    # ('index.html#konfigurator', 'Konfigurator'),
+    # ('index.html#unternehmen',  'Unternehmen'),
 ]
 
 TEL_ANZEIGE = '0441 / 23 32 252'
@@ -158,17 +159,12 @@ def kopf(titel, beschreibung, aktiv, favicon_pfad='assets/img/favicon.svg'):
 
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
 
-<div class="topbar">
-  <div class="wrap topbar__in">
-    <p class="topbar__claim">Spielkartenmanufaktur Oldenburg</p>
-  </div>
-</div>
-
 <header class="head" id="head">
   <div class="wrap head__in">
     <a class="head__logo" href="index.html" aria-label="Matthews SuperCards — Startseite">
       <img src="assets/img/logo.png" alt="Matthews SuperCards" width="504" height="101">
     </a>
+    <span class="head__claim">Spielkartenmanufaktur Oldenburg</span>
     <!-- NAV:START -->
     <nav class="nav" aria-label="Hauptnavigation">
       %(nav)s
@@ -333,7 +329,7 @@ def archiv_seite():
     </div>
     <div class="cta__act">
       <a class="btn btn--gelb btn--lg" href="index.html#unternehmen">Projekt anfragen</a>
-      <a class="btn btn--line btn--lg" href="index.html#angebot">Eigene Karte bauen</a>
+      <a class="btn btn--line btn--lg" href="rallyes.html">Rallye-Quartette ansehen</a>
     </div>
   </div>
 </section>
@@ -347,16 +343,20 @@ def archiv_seite():
 def rallye_uebersicht():
     karten = []
     for q in QUARTETTE:
-        if q['art'] != 'rallye':
+        # Auf Kundenwunsch zeigt die Liste vorerst nur laufende Rallyes
+        # mit offener Bestellung — die übrigen stehen im Archiv.
+        if q['art'] != 'rallye' or not q.get('bestellbar'):
+            continue
+        if q['konf'] != 'creme21':
             continue
         k = KONFIGURATOREN.get(q['konf'])
         if k and q['bestellbar']:
-            stand = ('<p class="rk__stand"><b>Konfigurator offen</b> seit %s</p>' % e(k['start']))
+            stand = ''
             akt = ('<div class="rk__act">'
-                   '<a class="btn btn--marke" href="rallye-%s.html#einreichen">'
-                   'Spielkarte einreichen</a>'
-                   '<a class="btn btn--ghost" href="rallye-%s.html#bestellen">'
-                   'Quartett bestellen</a></div>' % (q['konf'], q['konf']))
+                   '<a class="btn btn--marke" href="rallye-%s.html#bestellen">'
+                   'Quartett bestellen</a>'
+                   '<a class="btn btn--grau" href="rallye-%s.html#einreichen">'
+                   'Spielkarte einreichen</a></div>' % (q['konf'], q['konf']))
         else:
             stand = '<p class="rk__stand rk__stand--aus">Abgeschlossenes Projekt</p>'
             akt = '<a class="btn btn--ghost" href="archiv.html">Im Archiv ansehen</a>'
@@ -378,7 +378,7 @@ def rallye_uebersicht():
 <section class="sec kopfsec">
   <div class="wrap">
     <p class="tag"><span class="tag__id">A</span> Rallye-Quartette</p>
-    <h1>Mitfahren oder mitspielen</h1>
+    <h1>Mitfahren und mitspielen</h1>
     <p class="sec__lead">Zu jeder Rallye, die wir begleiten, gibt es zwei Wege: Teilnehmer
       gestalten ihre eigene Karte im Konfigurator — alle anderen bestellen das fertige
       Spiel. Gedruckt wird, sobald der Upload geschlossen ist.</p>
@@ -388,20 +388,6 @@ def rallye_uebersicht():
 <section class="sec sec--eng">
   <div class="wrap rliste">
 %(karten)s
-  </div>
-</section>
-
-<section class="sec sec--eng wahl">
-  <div class="wrap">
-    <header class="sec__head sec__head--mitte">
-      <p class="tag"><span class="tag__id">B</span> Keine Rallye dabei?</p>
-      <h2>Eigene Spielkarte bauen</h2>
-      <p class="sec__lead">Drei Generatoren stehen jedem offen — unabhängig von einer
-        Veranstaltung.</p>
-    </header>
-    <div class="wahl__genListe wahl__genListe--breit">
-%(gens)s
-    </div>
   </div>
 </section>
 
@@ -434,7 +420,7 @@ def rallye_seite(sid):
     q = next(x for x in QUARTETTE if x['konf'] == sid)
     preis   = PREIS.get(sid, 34.80)
     karte   = KARTE.get(sid, q['bild'])
-    preis2  = PREIS_AB_2.get(sid, preis)
+    aufst   = PREIS_AUFST.get(sid, 7.40)
     mengen = '\n'.join(
         '              <option value="%d"%s>%d&nbsp;Spiel%s</option>'
         % (n, ' selected' if n == 1 else '', n, '' if n == 1 else 'e')
@@ -478,11 +464,10 @@ def rallye_seite(sid):
         angefertigte Einzelst&uuml;ck, im passenden Schuber mit deiner pers&ouml;nlichen
         Spielkarte als Aussteller dabei.</p>
 
-      <form class="bestell" id="bestellform" data-preis="%(preis).2f" data-preis2="%(preis2).2f" data-artikel="%(sid)s">
+      <form class="bestell" id="bestellform" data-preis="%(preis).2f" data-aufsteller="%(aufst).2f" data-artikel="%(sid)s">
         <div class="bestell__preis">
-          <span class="bestell__ab">Einzelpreis</span>
-          <b class="bestell__zahl" id="preis">ab %(preisDE)s&nbsp;&euro;</b>
-          <span class="bestell__staffel">Ab 2&nbsp;Spielen <b>%(preis2DE)s&nbsp;&euro;</b> pro Spiel</span>
+          <span class="bestell__ab">Quartett im Schuber</span>
+          <b class="bestell__zahl" id="preis">%(preisDE)s&nbsp;&euro;</b>
           <span class="bestell__hinweis">zzgl. Versand</span>
         </div>
 
@@ -495,7 +480,7 @@ def rallye_seite(sid):
         <div class="bestell__reihe">
           <label class="vfeld">
             <span>Fahrer Nachname *</span>
-            <input type="text" name="name" maxlength="60" placeholder="Hellwege">
+            <input type="text" name="name" maxlength="60" placeholder="Nachname">
           </label>
           <label class="vfeld vfeld--kurz">
             <span>Start-Nr.</span>
@@ -504,6 +489,15 @@ def rallye_seite(sid):
         </div>
         <p class="bestell__klein bestell__klein--oben">Die Lieferanschrift fragen wir im
           n&auml;chsten Schritt bei der Zahlung ab.</p>
+
+        <label class="zusatz">
+          <input type="checkbox" id="aufsteller" name="aufsteller" value="1">
+          <span class="zusatz__text">
+            <b>Aufsteller mit deiner pers&ouml;nlichen Karte</b>
+            <span>Deine Spielkarte zum Hinstellen &mdash; als Erinnerung an die Ausfahrt.</span>
+          </span>
+          <span class="zusatz__preis">+&nbsp;%(aufstDE)s&nbsp;&euro;</span>
+        </label>
 
         <p class="bestell__summe">Summe: <b id="summe">%(preisDE)s&nbsp;&euro;</b>
           <span id="summehinweis">zzgl. Versand</span></p>
@@ -515,7 +509,32 @@ def rallye_seite(sid):
 %(mengen)s
             </select>
           </label>
-          <button type="submit" class="btn btn--marke btn--lg">Verbindlich bestellen</button>
+          <button type="button" class="btn btn--marke btn--lg" id="weiter">Weiter</button>
+        </div>
+
+        <!-- Vorschau: erscheint nach "Weiter" -->
+        <div class="vorschau2" id="vorschau2" hidden>
+          <p class="vorschau2__titel">So wird dein Spiel</p>
+          <div class="vorschau2__karten">
+            <figure>
+              <img src="assets/img/%(bild)s" alt="Schuber">
+              <figcaption>Quartett im Schuber</figcaption>
+            </figure>
+            <figure class="vorschau2__pers">
+              <img src="assets/img/%(karte)s" alt="Deine Spielkarte">
+              <span class="vorschau2__band"><b id="vs-nr">&mdash;</b><i id="vs-name">Nachname</i></span>
+              <figcaption>Deine pers&ouml;nliche Karte</figcaption>
+            </figure>
+            <figure id="vs-aufsteller" hidden>
+              <img src="assets/img/%(karte)s" alt="Aufsteller">
+              <figcaption>Aufsteller</figcaption>
+            </figure>
+          </div>
+          <p class="vorschau2__summe">Gesamt: <b id="vs-summe">&mdash;</b> <span>zzgl. Versand</span></p>
+          <div class="vorschau2__act">
+            <button type="button" class="btn btn--ghost" id="zurueck2">&larr; &Auml;ndern</button>
+            <button type="submit" class="btn btn--marke btn--lg">Verbindlich bestellen</button>
+          </div>
         </div>
 
         <p class="bestell__status" id="bestellstatus" hidden></p>
@@ -560,7 +579,7 @@ def rallye_seite(sid):
            start=e(k['start']), kurl=k['url'], kname=e(k['kurz']),
            kurz=e(k['kurz']), preis=preis, preisDE=('%.2f' % preis).replace('.', ','),
            mengen=mengen, sid=sid,
-           preis2=preis2, preis2DE=('%.2f' % preis2).replace('.', ','),
+           aufst=aufst, aufstDE=('%.2f' % aufst).replace('.', ','),
            karte=karte) + fuss()
 
 

@@ -27,11 +27,12 @@ STRIPE_API = 'https://api.stripe.com/v1/checkout/sessions'
 # Artikel, die bestellt werden können. Preise in Cent (brutto).
 # TODO Kunde: Versandkosten bestätigen.
 # cent = Einzelpreis, cent_ab_2 = Stückpreis ab zwei Spielen
+# cent = Quartett im Schuber, cent_aufsteller = Zusatz mit persönlicher Karte
 ARTIKEL = {
     'creme21': dict(name='Creme 21 Youngtimer Rallye 2026 — Quartett im Schuber',
-                    cent=3480, cent_ab_2=2960),
+                    cent=2940, cent_aufsteller=740),
     'adac':    dict(name='ADAC Westfalen Classic 2026 — Quartett im Schuber',
-                    cent=3480, cent_ab_2=2960),
+                    cent=2940, cent_aufsteller=740),
 }
 VERSAND_CENT = 495
 MAX_MENGE = 10
@@ -107,9 +108,6 @@ class Handler(SimpleHTTPRequestHandler):
         # Hinter dem Proxy des Hosters kommt die Anfrage per HTTP an,
         # die öffentliche Adresse ist aber HTTPS — sonst leitet Stripe
         # nach der Zahlung auf eine tote Adresse zurück.
-        # Ab zwei Spielen gilt der günstigere Stückpreis
-        stueckpreis = artikel['cent_ab_2'] if menge >= 2 else artikel['cent']
-
         herkunft = self.headers.get('Origin')
         if not herkunft:
             wirt = self.headers.get('Host') or 'localhost:4173'
@@ -121,7 +119,7 @@ class Handler(SimpleHTTPRequestHandler):
             ('success_url', herkunft + '/danke.html?sitzung={CHECKOUT_SESSION_ID}'),
             ('cancel_url', herkunft + eingang.get('zurueck', '/rallyes.html')),
             ('line_items[0][price_data][currency]', 'eur'),
-            ('line_items[0][price_data][unit_amount]', str(stueckpreis)),
+            ('line_items[0][price_data][unit_amount]', str(artikel['cent'])),
             ('line_items[0][price_data][product_data][name]', artikel['name']),
             ('line_items[0][quantity]', str(menge)),
             ('shipping_address_collection[allowed_countries][0]', 'DE'),
@@ -143,6 +141,16 @@ class Handler(SimpleHTTPRequestHandler):
                 felder.append(('metadata[%s]' % name, wert))
         if eingang.get('email'):
             felder.append(('customer_email', str(eingang['email'])[:120]))
+
+        # Aufsteller als eigene Position, damit er auf der Rechnung steht
+        if eingang.get('aufsteller'):
+            felder += [
+                ('line_items[1][price_data][currency]', 'eur'),
+                ('line_items[1][price_data][unit_amount]', str(artikel['cent_aufsteller'])),
+                ('line_items[1][price_data][product_data][name]',
+                 'Aufsteller mit persönlicher Spielkarte'),
+                ('line_items[1][quantity]', str(menge)),
+            ]
 
         anfrage = urllib.request.Request(
             STRIPE_API,

@@ -20,22 +20,15 @@
 
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
 
-<div class="topbar">
-  <div class="wrap topbar__in">
-    <p class="topbar__claim">Spielkartenmanufaktur Oldenburg</p>
-  </div>
-</div>
-
 <header class="head" id="head">
   <div class="wrap head__in">
     <a class="head__logo" href="index.html" aria-label="Matthews SuperCards — Startseite">
       <img src="assets/img/logo.png" alt="Matthews SuperCards" width="504" height="101">
     </a>
+    <span class="head__claim">Spielkartenmanufaktur Oldenburg</span>
     <!-- NAV:START -->
     <nav class="nav" aria-label="Hauptnavigation">
       <a href="rallyes.html" class="is-cur">Rallyes</a>
-      <a href="index.html#konfigurator">Konfigurator</a>
-      <a href="index.html#unternehmen">Unternehmen</a>
     </nav>
     <!-- NAV:END -->
     <button class="burger" id="burger" aria-expanded="false" aria-controls="mobnav" aria-label="Men&uuml; &ouml;ffnen">
@@ -45,8 +38,6 @@
   <!-- MOBNAV:START -->
   <div class="mobnav" id="mobnav" hidden>
     <a href="rallyes.html" class="is-cur">Rallyes</a>
-    <a href="index.html#konfigurator">Konfigurator</a>
-    <a href="index.html#unternehmen">Unternehmen</a>
   </div>
   <!-- MOBNAV:END -->
 </header>
@@ -88,11 +79,10 @@
         angefertigte Einzelst&uuml;ck, im passenden Schuber mit deiner pers&ouml;nlichen
         Spielkarte als Aussteller dabei.</p>
 
-      <form class="bestell" id="bestellform" data-preis="34.80" data-preis2="29.60" data-artikel="creme21">
+      <form class="bestell" id="bestellform" data-preis="29.40" data-aufsteller="7.40" data-artikel="creme21">
         <div class="bestell__preis">
-          <span class="bestell__ab">Einzelpreis</span>
-          <b class="bestell__zahl" id="preis">ab 34,80&nbsp;&euro;</b>
-          <span class="bestell__staffel">Ab 2&nbsp;Spielen <b>29,60&nbsp;&euro;</b> pro Spiel</span>
+          <span class="bestell__ab">Quartett im Schuber</span>
+          <b class="bestell__zahl" id="preis">29,40&nbsp;&euro;</b>
           <span class="bestell__hinweis">zzgl. Versand</span>
         </div>
 
@@ -105,7 +95,7 @@
         <div class="bestell__reihe">
           <label class="vfeld">
             <span>Fahrer Nachname *</span>
-            <input type="text" name="name" maxlength="60" placeholder="Hellwege">
+            <input type="text" name="name" maxlength="60" placeholder="Nachname">
           </label>
           <label class="vfeld vfeld--kurz">
             <span>Start-Nr.</span>
@@ -115,7 +105,16 @@
         <p class="bestell__klein bestell__klein--oben">Die Lieferanschrift fragen wir im
           n&auml;chsten Schritt bei der Zahlung ab.</p>
 
-        <p class="bestell__summe">Summe: <b id="summe">34,80&nbsp;&euro;</b>
+        <label class="zusatz">
+          <input type="checkbox" id="aufsteller" name="aufsteller" value="1">
+          <span class="zusatz__text">
+            <b>Aufsteller mit deiner pers&ouml;nlichen Karte</b>
+            <span>Deine Spielkarte zum Hinstellen &mdash; als Erinnerung an die Ausfahrt.</span>
+          </span>
+          <span class="zusatz__preis">+&nbsp;7,40&nbsp;&euro;</span>
+        </label>
+
+        <p class="bestell__summe">Summe: <b id="summe">29,40&nbsp;&euro;</b>
           <span id="summehinweis">zzgl. Versand</span></p>
 
         <div class="bestell__buchen">
@@ -134,7 +133,32 @@
               <option value="10">10&nbsp;Spiele</option>
             </select>
           </label>
-          <button type="submit" class="btn btn--marke btn--lg">Verbindlich bestellen</button>
+          <button type="button" class="btn btn--marke btn--lg" id="weiter">Weiter</button>
+        </div>
+
+        <!-- Vorschau: erscheint nach "Weiter" -->
+        <div class="vorschau2" id="vorschau2" hidden>
+          <p class="vorschau2__titel">So wird dein Spiel</p>
+          <div class="vorschau2__karten">
+            <figure>
+              <img src="assets/img/q-creme21.jpg" alt="Schuber">
+              <figcaption>Quartett im Schuber</figcaption>
+            </figure>
+            <figure class="vorschau2__pers">
+              <img src="assets/img/karte-creme21.png" alt="Deine Spielkarte">
+              <span class="vorschau2__band"><b id="vs-nr">&mdash;</b><i id="vs-name">Nachname</i></span>
+              <figcaption>Deine pers&ouml;nliche Karte</figcaption>
+            </figure>
+            <figure id="vs-aufsteller" hidden>
+              <img src="assets/img/karte-creme21.png" alt="Aufsteller">
+              <figcaption>Aufsteller</figcaption>
+            </figure>
+          </div>
+          <p class="vorschau2__summe">Gesamt: <b id="vs-summe">&mdash;</b> <span>zzgl. Versand</span></p>
+          <div class="vorschau2__act">
+            <button type="button" class="btn btn--ghost" id="zurueck2">&larr; &Auml;ndern</button>
+            <button type="submit" class="btn btn--marke btn--lg">Verbindlich bestellen</button>
+          </div>
         </div>
 
         <p class="bestell__status" id="bestellstatus" hidden></p>

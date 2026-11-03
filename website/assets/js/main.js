@@ -385,35 +385,31 @@ reviews: []
      durch einen Server-Endpunkt mit Bestellnummer ersetzen (siehe README). */
   var bestell = $('#bestellform');
   if (bestell) {
-    // Preis steht am Formular, damit er nur an einer Stelle gepflegt wird
     var einzel  = parseFloat(bestell.dataset.preis || '0') || 0;
-    var einzel2 = parseFloat(bestell.dataset.preis2 || '0') || einzel;
+    var aufPrs  = parseFloat(bestell.dataset.aufsteller || '0') || 0;
     var mengeF  = $('#menge');
+    var aufF    = $('#aufsteller');
     var summeF  = $('#summe');
     var statusF = $('#bestellstatus');
+    var schau   = $('#vorschau2');
 
-    var euro = function (n) {
-      return n.toFixed(2).replace('.', ',') + '\u00A0\u20AC';
-    };
+    var euro = function (n) { return n.toFixed(2).replace('.', ',') + '\u00A0\u20AC'; };
     var menge = function () { return parseInt(mengeF.value, 10) || 1; };
-    // Ab zwei Spielen gilt der günstigere Stückpreis
-    var stueck = function () { return menge() >= 2 ? einzel2 : einzel; };
+    var gesamt = function () {
+      return (einzel + (aufF && aufF.checked ? aufPrs : 0)) * menge();
+    };
     var rechne = function () {
-      var m = menge();
-      summeF.textContent = euro(stueck() * m);
-      var h = $('#summehinweis');
-      if (h) h.textContent = m >= 2
-        ? 'zzgl. Versand · ' + euro(einzel2) + ' je Spiel'
-        : 'zzgl. Versand';
+      summeF.textContent = euro(gesamt());
+      var v = $('#vs-summe'); if (v) v.textContent = euro(gesamt());
+      var a = $('#vs-aufsteller'); if (a) a.hidden = !(aufF && aufF.checked);
     };
     mengeF.addEventListener('change', rechne);
+    if (aufF) aufF.addEventListener('change', rechne);
     rechne();
 
-    // Zahlenfelder nehmen nur Ziffern an
     $$('input[inputmode=numeric]', bestell).forEach(function (inp) {
       inp.addEventListener('input', function () {
-        var nur = inp.value.replace(/\D+/g, '');
-        if (nur !== inp.value) inp.value = nur;
+        inp.value = inp.value.replace(/\D+/g, '');
       });
     });
 
@@ -422,26 +418,52 @@ reviews: []
       statusF.dataset.art = art || 'ok';
       statusF.hidden = false;
     };
-
-    bestell.addEventListener('submit', function (ev) {
-      ev.preventDefault();
-      var d = new FormData(bestell);
-      var hole = function (k) { return String(d.get(k) || '').trim(); };
-      var pflicht = ['name', 'email'];
-      var fehlt = pflicht.filter(function (k) { return !hole(k); });
-
+    var hole = function (k) {
+      var f = bestell.querySelector('[name="' + k + '"]');
+      return f ? String(f.value || '').trim() : '';
+    };
+    var geprueft = function () {
+      var fehlt = ['email', 'name'].filter(function (k) { return !hole(k); });
       if (fehlt.length) {
-        melde('Bitte Fahrer-Nachname und E-Mail-Adresse ausfüllen.', 'fehler');
-        var erstes = bestell.querySelector('[name="' + fehlt[0] + '"]');
-        if (erstes) erstes.focus();
-        return;
+        melde('Bitte E-Mail-Adresse und Fahrer-Nachname ausfüllen.', 'fehler');
+        bestell.querySelector('[name="' + fehlt[0] + '"]').focus();
+        return false;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(hole('email'))) {
         melde('Die E-Mail-Adresse sieht nicht vollständig aus.', 'fehler');
         bestell.querySelector('[name=email]').focus();
-        return;
+        return false;
       }
-      var knopf = bestell.querySelector('button[type=submit]');
+      return true;
+    };
+
+    /* Schritt 1: "Weiter" zeigt die Vorschau der Karten */
+    var weiter = $('#weiter');
+    if (weiter && schau) {
+      weiter.addEventListener('click', function () {
+        if (!geprueft()) return;
+        var nr = $('#vs-nr'), nm = $('#vs-name');
+        if (nr) nr.textContent = hole('startnr') || '—';
+        if (nm) nm.textContent = hole('name');
+        rechne();
+        statusF.hidden = true;
+        schau.hidden = false;
+        $('.bestell__buchen').hidden = true;
+        schau.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      });
+      var zurueck = $('#zurueck2');
+      if (zurueck) zurueck.addEventListener('click', function () {
+        schau.hidden = true;
+        $('.bestell__buchen').hidden = false;
+      });
+    }
+
+    /* Schritt 2: verbindlich bestellen */
+    bestell.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      if (!geprueft()) return;
+
+      var knopf = schau.querySelector('button[type=submit]');
       var beschriftung = knopf.textContent;
       knopf.disabled = true;
       knopf.textContent = 'Einen Moment …';
@@ -451,18 +473,19 @@ reviews: []
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          artikel: bestell.dataset.artikel,
-          menge:   menge(),
-          name:    hole('name'),
-          startnr: hole('startnr'),
-          email:   hole('email'),
-          zurueck: location.pathname
+          artikel:    bestell.dataset.artikel,
+          menge:      menge(),
+          aufsteller: !!(aufF && aufF.checked),
+          name:       hole('name'),
+          startnr:    hole('startnr'),
+          email:      hole('email'),
+          zurueck:    location.pathname
         })
       })
       .then(function (a) { return a.json().then(function (d) { return { ok: a.ok, d: d }; }); })
       .then(function (r) {
         if (!r.ok || !r.d.url) throw new Error(r.d.fehler || 'Unbekannter Fehler');
-        location.href = r.d.url;           // weiter zu Stripe
+        location.href = r.d.url;
       })
       .catch(function (e) {
         knopf.disabled = false;
@@ -470,15 +493,6 @@ reviews: []
         melde('Die Zahlung konnte nicht gestartet werden: ' + e.message, 'fehler');
       });
     });
-  }
-
-  var sitzung = $('#sitzungsnummer');
-  if (sitzung) {
-    var id = new URLSearchParams(location.search).get('sitzung');
-    if (id) {
-      sitzung.textContent = 'Vorgangsnummer: ' + id;
-      sitzung.hidden = false;
-    }
   }
 
   /* Einblenden beim Scrollen */
