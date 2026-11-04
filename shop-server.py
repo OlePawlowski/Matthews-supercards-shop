@@ -38,18 +38,26 @@ VERSAND_CENT = 495
 MAX_MENGE = 10
 
 
+def umgebung(name):
+    """Wert aus der Umgebung oder aus .env lesen."""
+    w = os.environ.get(name, '').strip()
+    if w:
+        return w
+    pfad = os.path.join(HIER, '.env')
+    if os.path.exists(pfad):
+        for zeile in open(pfad, encoding='utf-8'):
+            zeile = zeile.strip()
+            if zeile.startswith(name + '='):
+                return zeile.split('=', 1)[1].strip().strip('"\'')
+    return ''
+
+
 def schluessel():
-    """Secret Key aus Umgebung oder .env lesen."""
-    k = os.environ.get('STRIPE_SECRET_KEY', '').strip()
-    if not k:
-        pfad = os.path.join(HIER, '.env')
-        if os.path.exists(pfad):
-            for zeile in open(pfad, encoding='utf-8'):
-                zeile = zeile.strip()
-                if zeile.startswith('STRIPE_SECRET_KEY'):
-                    k = zeile.split('=', 1)[1].strip().strip('"\'')
-                    break
-    return k
+    return umgebung('STRIPE_SECRET_KEY')
+
+
+def oeffentlicher_schluessel():
+    return umgebung('STRIPE_PUBLISHABLE_KEY')
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -70,6 +78,37 @@ class Handler(SimpleHTTPRequestHandler):
 
     def log_message(self, format, *args):
         sys.stderr.write('%s  %s\n' % (self.log_date_time_string(), format % args))
+
+    # ── Zahlungsstatus abfragen (Danke-Seite) ────────────────────────────
+    def do_GET(self):
+        if self.path.split('?')[0].rstrip('/') != '/api/sitzung':
+            return super().do_GET()
+
+        kennung = urllib.parse.parse_qs(
+            urllib.parse.urlparse(self.path).query).get('id', [''])[0]
+        if not kennung.startswith('cs_'):
+            return self.antwort(400, {'fehler': 'Keine gültige Vorgangsnummer'})
+
+        key = schluessel()
+        if not key:
+            return self.antwort(500, {'fehler': 'Kein Schlüssel hinterlegt'})
+
+        anfrage = urllib.request.Request(
+            'https://api.stripe.com/v1/checkout/sessions/'
+            + urllib.parse.quote(kennung, safe=''),
+            headers={'Authorization': 'Bearer ' + key})
+        try:
+            with urllib.request.urlopen(anfrage, timeout=15) as a:
+                d = json.loads(a.read())
+            return self.antwort(200, {
+                'status': d.get('status'),
+                'bezahlt': d.get('payment_status') == 'paid',
+                'betrag': d.get('amount_total'),
+                'email': (d.get('customer_details') or {}).get('email'),
+            })
+        except Exception as e:
+            self.log_message('Statusabfrage fehlgeschlagen: %s', e)
+            return self.antwort(502, {'fehler': 'Status nicht abrufbar'})
 
     # ── Checkout ─────────────────────────────────────────────────────────
     def do_POST(self):
@@ -116,8 +155,10 @@ class Handler(SimpleHTTPRequestHandler):
             herkunft = schema + '://' + wirt
         felder = [
             ('mode', 'payment'),
-            ('success_url', herkunft + '/danke.html?sitzung={CHECKOUT_SESSION_ID}'),
-            ('cancel_url', herkunft + eingang.get('zurueck', '/rallyes.html')),
+            # Eingebettet statt Weiterleitung: der Zahlungsblock sitzt auf
+            # unserer Seite, nur das Formular selbst kommt von Stripe.
+            ('ui_mode', 'embedded_page'),
+            ('return_url', herkunft + '/danke.html?sitzung={CHECKOUT_SESSION_ID}'),
             ('line_items[0][price_data][currency]', 'eur'),
             ('line_items[0][price_data][unit_amount]', str(artikel['cent'])),
             ('line_items[0][price_data][product_data][name]', artikel['name']),
@@ -160,7 +201,10 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             with urllib.request.urlopen(anfrage, timeout=20) as a:
                 sitzung = json.loads(a.read())
-            return self.antwort(200, {'url': sitzung['url']})
+            return self.antwort(200, {
+                'client_secret': sitzung.get('client_secret'),
+                'publishable_key': oeffentlicher_schluessel(),
+            })
         except urllib.error.HTTPError as e:
             try:
                 meldung = json.loads(e.read())['error']['message']

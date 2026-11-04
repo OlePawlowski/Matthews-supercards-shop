@@ -161,6 +161,15 @@
           </div>
         </div>
 
+        <!-- Zahlungsblock von Stripe, eingebettet auf dieser Seite -->
+        <div class="zahlung" id="zahlung" hidden>
+          <div class="zahlung__kopf">
+            <button type="button" class="btn btn--ghost" id="zurueck3">&larr; Zur&uuml;ck</button>
+            <span>Zahlung</span>
+          </div>
+          <div id="stripe-block"></div>
+        </div>
+
         <p class="bestell__status" id="bestellstatus" hidden></p>
       </form>
     </div>
@@ -242,6 +251,7 @@
   </div>
 </footer>
 
+<script src="https://js.stripe.com/v3/"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

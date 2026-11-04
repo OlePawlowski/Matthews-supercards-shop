@@ -458,7 +458,10 @@ reviews: []
       });
     }
 
-    /* Schritt 2: verbindlich bestellen */
+    /* Schritt 2: Zahlungsblock einbetten statt weiterzuleiten */
+    var zahlung = $('#zahlung');
+    var sitzung = null;
+
     bestell.addEventListener('submit', function (ev) {
       ev.preventDefault();
       if (!geprueft()) return;
@@ -467,7 +470,6 @@ reviews: []
       var beschriftung = knopf.textContent;
       knopf.disabled = true;
       knopf.textContent = 'Einen Moment …';
-      melde('Zahlung wird vorbereitet …', 'ok');
 
       fetch('/api/checkout', {
         method: 'POST',
@@ -484,14 +486,39 @@ reviews: []
       })
       .then(function (a) { return a.json().then(function (d) { return { ok: a.ok, d: d }; }); })
       .then(function (r) {
-        if (!r.ok || !r.d.url) throw new Error(r.d.fehler || 'Unbekannter Fehler');
-        location.href = r.d.url;
+        if (!r.ok || !r.d.client_secret) throw new Error(r.d.fehler || 'Unbekannter Fehler');
+        if (typeof Stripe !== 'function') throw new Error('Stripe konnte nicht geladen werden');
+
+        knopf.disabled = false;
+        knopf.textContent = beschriftung;
+        schau.hidden = true;
+        zahlung.hidden = false;
+
+        // Ein früher eingebetteter Block muss weg, sonst doppelt sich er
+        if (sitzung) { try { sitzung.destroy(); } catch (e) {} sitzung = null; }
+
+        return Stripe(r.d.publishable_key)
+          .initEmbeddedCheckout({ clientSecret: r.d.client_secret })
+          .then(function (s) {
+            sitzung = s;
+            s.mount('#stripe-block');
+            zahlung.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+          });
       })
       .catch(function (e) {
         knopf.disabled = false;
         knopf.textContent = beschriftung;
+        zahlung.hidden = true;
+        schau.hidden = false;
         melde('Die Zahlung konnte nicht gestartet werden: ' + e.message, 'fehler');
       });
+    });
+
+    var zurueck3 = $('#zurueck3');
+    if (zurueck3) zurueck3.addEventListener('click', function () {
+      if (sitzung) { try { sitzung.destroy(); } catch (e) {} sitzung = null; }
+      zahlung.hidden = true;
+      schau.hidden = false;
     });
   }
 

@@ -187,7 +187,7 @@ def kopf(titel, beschreibung, aktiv, favicon_pfad='assets/img/favicon.svg'):
            tell=TEL_LINK, tela=TEL_ANZEIGE)
 
 
-def fuss():
+def fuss(stripe=False):
     return '''</main>
 
 <div class="rufleiste" id="rufleiste" hidden>
@@ -232,10 +232,12 @@ def fuss():
   </div>
 </footer>
 
-<script src="assets/js/main.js"></script>
+%(stripejs)s<script src="assets/js/main.js"></script>
 </body>
 </html>
-''' % dict(tell=TEL_LINK, tela=TEL_ANZEIGE, mail=MAIL)
+''' % dict(tell=TEL_LINK, tela=TEL_ANZEIGE, mail=MAIL,
+           stripejs=('<script src="https://js.stripe.com/v3/"></script>\n'
+                     if stripe else ''))
 
 
 # ── Archiv ───────────────────────────────────────────────────────────────
@@ -537,6 +539,15 @@ def rallye_seite(sid):
           </div>
         </div>
 
+        <!-- Zahlungsblock von Stripe, eingebettet auf dieser Seite -->
+        <div class="zahlung" id="zahlung" hidden>
+          <div class="zahlung__kopf">
+            <button type="button" class="btn btn--ghost" id="zurueck3">&larr; Zur&uuml;ck</button>
+            <span>Zahlung</span>
+          </div>
+          <div id="stripe-block"></div>
+        </div>
+
         <p class="bestell__status" id="bestellstatus" hidden></p>
       </form>
     </div>
@@ -580,7 +591,7 @@ def rallye_seite(sid):
            kurz=e(k['kurz']), preis=preis, preisDE=('%.2f' % preis).replace('.', ','),
            mengen=mengen, sid=sid,
            aufst=aufst, aufstDE=('%.2f' % aufst).replace('.', ','),
-           karte=karte) + fuss()
+           karte=karte) + fuss(stripe=True)
 
 
 # ── Navigation in der handgepflegten Startseite nachziehen ───────────────
