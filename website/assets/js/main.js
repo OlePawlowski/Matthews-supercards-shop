@@ -385,8 +385,12 @@ reviews: []
      durch einen Server-Endpunkt mit Bestellnummer ersetzen (siehe README). */
   var bestell = $('#bestellform');
   if (bestell) {
-    var einzel  = parseFloat(bestell.dataset.preis || '0') || 0;
+    var basis   = parseFloat(bestell.dataset.preis || '0') || 0;
+    var soloPrs = parseFloat(bestell.dataset.solo || '0') || 0;
+    var grundId = bestell.dataset.artikel;
+    var einzel  = basis;
     var aufPrs  = parseFloat(bestell.dataset.aufsteller || '0') || 0;
+    var nurAufsteller = false;
     var mengeF  = $('#menge');
     var aufF    = $('#aufsteller');
     var summeF  = $('#summe');
@@ -396,13 +400,37 @@ reviews: []
     var euro = function (n) { return n.toFixed(2).replace('.', ',') + '\u00A0\u20AC'; };
     var menge = function () { return parseInt(mengeF.value, 10) || 1; };
     var gesamt = function () {
-      return (einzel + (aufF && aufF.checked ? aufPrs : 0)) * menge();
+      return (einzel + (!nurAufsteller && aufF && aufF.checked ? aufPrs : 0)) * menge();
     };
     var rechne = function () {
       summeF.textContent = euro(gesamt());
       var v = $('#vs-summe'); if (v) v.textContent = euro(gesamt());
-      var a = $('#vs-aufsteller'); if (a) a.hidden = !(aufF && aufF.checked);
+      var a = $('#vs-aufsteller');
+      if (a) a.hidden = !(nurAufsteller || (aufF && aufF.checked));
+      var sch = $('#vs-schuber'), pers = $('#vs-pers');
+      if (sch)  sch.hidden  = nurAufsteller;
+      if (pers) pers.hidden = nurAufsteller;
     };
+
+    /* Quartett oder nur der Aufsteller */
+    var zusatz = $('#zusatzblock');
+    var titelF = $('#preistitel');
+    var preisF = $('#preis');
+    var euroP  = function (n) { return n.toFixed(2).replace('.', ',') + '\u00A0\u20AC'; };
+    $$('input[name=produkt]', bestell).forEach(function (r) {
+      r.addEventListener('change', function () {
+        nurAufsteller = (r.value === 'aufsteller') && r.checked;
+        einzel = nurAufsteller ? soloPrs : basis;
+        bestell.dataset.artikel = nurAufsteller ? 'aufsteller-' + grundId : grundId;
+        if (zusatz) zusatz.hidden = nurAufsteller;
+        if (titelF) titelF.textContent = nurAufsteller
+          ? 'Aufsteller mit deiner Karte' : 'Quartett im Schuber';
+        if (preisF) preisF.textContent = euroP(einzel);
+        var t = $('.vorschau2__titel');
+        if (t) t.textContent = nurAufsteller ? 'So wird dein Aufsteller' : 'So wird dein Spiel';
+        rechne();
+      });
+    });
     mengeF.addEventListener('change', rechne);
     if (aufF) aufF.addEventListener('change', rechne);
     rechne();
@@ -477,7 +505,7 @@ reviews: []
         body: JSON.stringify({
           artikel:    bestell.dataset.artikel,
           menge:      menge(),
-          aufsteller: !!(aufF && aufF.checked),
+          aufsteller: !nurAufsteller && !!(aufF && aufF.checked),
           name:       hole('name'),
           startnr:    hole('startnr'),
           email:      hole('email'),

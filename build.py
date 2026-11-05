@@ -18,7 +18,9 @@ ZIEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'website')
 # Preise in Euro (brutto). TODO Kunde: für ADAC bestätigen.
 PREIS       = {'creme21': 29.40, 'adac': 29.40}
 # Aufsteller mit personalisierter Karte — als Zusatz wählbar
-PREIS_AUFST = {'creme21':  7.40, 'adac':  7.40}
+PREIS_AUFST = {'creme21':  5.40, 'adac':  5.40}
+# Derselbe Aufsteller einzeln, ohne Quartett
+PREIS_AUFST_SOLO = 7.40
 # Die Spielkarte selbst — neben dem Schuber auf der Produktseite
 KARTE       = {'creme21': 'karte-creme21.png', 'adac': 'q-adac.jpg'}
 
@@ -126,12 +128,24 @@ def e(s):
 
 # ── Bausteine ────────────────────────────────────────────────────────────
 
+NAV_ICON = (
+    '<svg class="navkarten" viewBox="0 0 26 22" width="22" height="19" aria-hidden="true">'
+    '<g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">'
+    '<rect x="3.2" y="5.4" width="9.6" height="14.2" rx="1.6" transform="rotate(-22 8 12.5)"/>'
+    '<rect x="8.4" y="3.2" width="9.6" height="14.6" rx="1.6" transform="rotate(-9 13.2 10.5)"/>'
+    '<rect x="14.6" y="2.2" width="9.6" height="14.8" rx="1.6"/>'
+    '</g></svg>')
+
+
 def nav_links(aktiv, praefix=''):
     aus = []
     for ziel, text in NAV:
         z = ziel if not ziel.startswith('index.html') or praefix else ziel
-        cls = ' class="is-cur"' if ziel.split('#')[0] == aktiv else ''
-        aus.append('<a href="%s"%s>%s</a>' % (z, cls, e(text)))
+        cls = ' is-cur' if ziel.split('#')[0] == aktiv else ''
+        # Die Rallye-Spiele bekommen den Kartenfächer davor
+        icon = NAV_ICON if text == 'Rallyes' else ''
+        aus.append('<a href="' + z + '" class="navlink' + cls + '">'
+                   + icon + e(text) + '</a>')
     return aus
 
 
@@ -164,7 +178,7 @@ def kopf(titel, beschreibung, aktiv, favicon_pfad='assets/img/favicon.svg'):
     <a class="head__logo" href="index.html" aria-label="Matthews SuperCards — Startseite">
       <img src="assets/img/logo.png" alt="Matthews SuperCards" width="504" height="101">
     </a>
-    <span class="head__claim">Spielkartenmanufaktur Oldenburg</span>
+    <span class="head__claim">Spielkartenmanufaktur&nbsp;Oldenburg</span>
     <!-- NAV:START -->
     <nav class="nav" aria-label="Hauptnavigation">
       %(nav)s
@@ -242,6 +256,15 @@ def fuss(stripe=False):
 
 # ── Archiv ───────────────────────────────────────────────────────────────
 
+def bau_ziel(q, k):
+    """Konfigurator, in dem sich zu diesem Archiveintrag eine Karte bauen lässt."""
+    if k:
+        return k['url']
+    gid = 'mofa' if q['id'] == 'mofa1a' else (
+        'rallye' if q['art'] == 'rallye' else 'oldtimer')
+    return next(g['url'] for g in GENERATOREN if g['id'] == gid)
+
+
 def archiv_seite():
     karten = []
     for q in QUARTETTE:
@@ -255,6 +278,11 @@ def archiv_seite():
                   if ziel else
                   '<a class="qk2__link qk2__link--leise" href="index.html#unternehmen">'
                   'Ähnliches anfragen</a>')
+        # Zu jedem Eintrag im Archiv lässt sich eine Karte bauen: zur Rallye im
+        # eigenen Konfigurator, sonst im passenden offenen Generator.
+        aktion += ('\n            <a class="qk2__link qk2__link--bauen" href="%s"'
+                   ' target="_blank" rel="noopener">Karte erstellen</a>'
+                   % bau_ziel(q, k))
         karten.append('''        <article class="qk2" data-konf="%(konf)s" data-art="%(art)s">
           <div class="qk2__bild"><img src="assets/img/%(bild)s" alt="%(alt)s" loading="lazy"></div>
           <div class="qk2__text">
@@ -289,7 +317,7 @@ def archiv_seite():
                 'und Art filterbar.', 'archiv.html') + '''
 <section class="sec kopfsec">
   <div class="wrap">
-    <p class="tag"><span class="tag__id">A</span> Archiv</p>
+    <p class="tag">Kartenarchiv</p>
     <h1>Alles, was wir gemacht haben</h1>
     <p class="sec__lead">Jedes Quartett, das unsere Werkstatt verlassen hat — Rallye-Spiele
       mit eigenem Konfigurator, Themenquartette und Arbeiten für Marken. Filtern Sie nach
@@ -357,8 +385,9 @@ def rallye_uebersicht():
             akt = ('<div class="rk__act">'
                    '<a class="btn btn--marke" href="rallye-%s.html#bestellen">'
                    'Quartett bestellen</a>'
-                   '<a class="btn btn--grau" href="rallye-%s.html#einreichen">'
-                   'Spielkarte einreichen</a></div>' % (q['konf'], q['konf']))
+                   '<a class="btn btn--grau" href="%s" target="_blank" rel="noopener">'
+                   'Spielkarte einreichen</a></div>'
+                   % (q['konf'], KONFIGURATOREN[q['konf']]['url']))
         else:
             stand = '<p class="rk__stand rk__stand--aus">Abgeschlossenes Projekt</p>'
             akt = '<a class="btn btn--ghost" href="archiv.html">Im Archiv ansehen</a>'
@@ -379,7 +408,7 @@ def rallye_uebersicht():
                 'oder fertig bestellen.', 'rallyes.html') + '''
 <section class="sec kopfsec">
   <div class="wrap">
-    <p class="tag"><span class="tag__id">A</span> Rallye-Quartette</p>
+    <p class="tag">Rallye&nbsp;Quartettspiele</p>
     <h1>Mitfahren und mitspielen</h1>
     <p class="sec__lead">Zu jeder Rallye, die wir begleiten, gibt es zwei Wege: Teilnehmer
       gestalten ihre eigene Karte im Konfigurator — alle anderen bestellen das fertige
@@ -422,7 +451,8 @@ def rallye_seite(sid):
     q = next(x for x in QUARTETTE if x['konf'] == sid)
     preis   = PREIS.get(sid, 34.80)
     karte   = KARTE.get(sid, q['bild'])
-    aufst   = PREIS_AUFST.get(sid, 7.40)
+    aufst   = PREIS_AUFST.get(sid, 5.40)
+    solo    = PREIS_AUFST_SOLO
     mengen = '\n'.join(
         '              <option value="%d"%s>%d&nbsp;Spiel%s</option>'
         % (n, ' selected' if n == 1 else '', n, '' if n == 1 else 'e')
@@ -437,7 +467,7 @@ def rallye_seite(sid):
     <div class="produkt__bilder">
       <figure class="produkt__bild">
         <img src="assets/img/%(bild)s" alt="%(alt)s" width="560" height="850">
-        <figcaption>Schuber</figcaption>
+        <figcaption>Dein Schuber</figcaption>
       </figure>
       <figure class="produkt__bild produkt__bild--karte">
         <img src="assets/img/%(karte)s" alt="Spielkarte der %(kurz)s" width="560" height="851">
@@ -466,11 +496,27 @@ def rallye_seite(sid):
         angefertigte Einzelst&uuml;ck, im passenden Schuber mit deiner pers&ouml;nlichen
         Spielkarte als Aussteller dabei.</p>
 
-      <form class="bestell" id="bestellform" data-preis="%(preis).2f" data-aufsteller="%(aufst).2f" data-artikel="%(sid)s">
+      <form class="bestell" id="bestellform" data-preis="%(preis).2f"
+            data-aufsteller="%(aufst).2f" data-solo="%(solo).2f" data-artikel="%(sid)s">
         <div class="bestell__preis">
-          <span class="bestell__ab">Quartett im Schuber</span>
+          <span class="bestell__ab" id="preistitel">Quartett im Schuber</span>
           <b class="bestell__zahl" id="preis">%(preisDE)s&nbsp;&euro;</b>
           <span class="bestell__hinweis">zzgl. Versand</span>
+        </div>
+
+        <div class="wahl" id="produktwahl">
+          <label class="wahl__o">
+            <input type="radio" name="produkt" value="quartett" checked>
+            <span class="wahl__t"><b>Quartett im Schuber</b>
+              <i>Das komplette Spiel mit deiner Karte darin</i></span>
+            <span class="wahl__p">%(preisDE)s&nbsp;&euro;</span>
+          </label>
+          <label class="wahl__o">
+            <input type="radio" name="produkt" value="aufsteller">
+            <span class="wahl__t"><b>Nur der Aufsteller</b>
+              <i>Deine pers&ouml;nliche Karte zum Hinstellen, ohne Spiel</i></span>
+            <span class="wahl__p">%(soloDE)s&nbsp;&euro;</span>
+          </label>
         </div>
 
         <div class="bestell__reihe">
@@ -492,7 +538,7 @@ def rallye_seite(sid):
         <p class="bestell__klein bestell__klein--oben">Die Lieferanschrift fragen wir im
           n&auml;chsten Schritt bei der Zahlung ab.</p>
 
-        <label class="zusatz">
+        <label class="zusatz" id="zusatzblock">
           <input type="checkbox" id="aufsteller" name="aufsteller" value="1">
           <span class="zusatz__text">
             <b>Aufsteller mit deiner pers&ouml;nlichen Karte</b>
@@ -518,11 +564,11 @@ def rallye_seite(sid):
         <div class="vorschau2" id="vorschau2" hidden>
           <p class="vorschau2__titel">So wird dein Spiel</p>
           <div class="vorschau2__karten">
-            <figure>
+            <figure id="vs-schuber">
               <img src="assets/img/%(bild)s" alt="Schuber">
               <figcaption>Quartett im Schuber</figcaption>
             </figure>
-            <figure class="vorschau2__pers">
+            <figure class="vorschau2__pers" id="vs-pers">
               <img src="assets/img/%(karte)s" alt="Deine Spielkarte">
               <span class="vorschau2__band"><b id="vs-nr">&mdash;</b><i id="vs-name">Nachname</i></span>
               <figcaption>Deine pers&ouml;nliche Karte</figcaption>
@@ -585,7 +631,8 @@ def rallye_seite(sid):
       <a href="archiv.html">Archiv ansehen &rarr;</a></p>
   </div>
 </section>
-''' % dict(bild=q['bild'], alt=e('Quartettkarte ' + q['titel']), titel=e(k['name']),
+''' % dict(solo=solo, soloDE=('%.2f' % solo).replace('.', ','),
+           bild=q['bild'], alt=e('Quartettkarte ' + q['titel']), titel=e(k['name']),
            unter=e(q['unter']), jahr=e(k['jahr']), besch=e(q['text']),
            start=e(k['start']), kurl=k['url'], kname=e(k['kurz']),
            kurz=e(k['kurz']), preis=preis, preisDE=('%.2f' % preis).replace('.', ','),

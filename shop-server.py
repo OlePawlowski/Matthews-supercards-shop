@@ -30,9 +30,16 @@ STRIPE_API = 'https://api.stripe.com/v1/checkout/sessions'
 # cent = Quartett im Schuber, cent_aufsteller = Zusatz mit persönlicher Karte
 ARTIKEL = {
     'creme21': dict(name='Creme 21 Youngtimer Rallye 2026 — Quartett im Schuber',
-                    cent=2940, cent_aufsteller=740),
+                    cent=2940, cent_aufsteller=540),
     'adac':    dict(name='ADAC Westfalen Classic 2026 — Quartett im Schuber',
-                    cent=2940, cent_aufsteller=740),
+                    cent=2940, cent_aufsteller=540),
+    # Derselbe Aufsteller einzeln, ohne Quartett
+    'aufsteller-creme21': dict(
+        name='Creme 21 Youngtimer Rallye 2026 — Aufsteller mit persönlicher Spielkarte',
+        cent=740, cent_aufsteller=0),
+    'aufsteller-adac': dict(
+        name='ADAC Westfalen Classic 2026 — Aufsteller mit persönlicher Spielkarte',
+        cent=740, cent_aufsteller=0),
 }
 VERSAND_CENT = 495
 MAX_MENGE = 10
@@ -184,7 +191,7 @@ class Handler(SimpleHTTPRequestHandler):
             felder.append(('customer_email', str(eingang['email'])[:120]))
 
         # Aufsteller als eigene Position, damit er auf der Rechnung steht
-        if eingang.get('aufsteller'):
+        if eingang.get('aufsteller') and artikel['cent_aufsteller']:
             felder += [
                 ('line_items[1][price_data][currency]', 'eur'),
                 ('line_items[1][price_data][unit_amount]', str(artikel['cent_aufsteller'])),

@@ -974,17 +974,15 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 .hero--voll .hero__in{ position:relative; display:block;
   padding-block:clamp(48px,7vw,96px) }
 .hero--voll .hero__copy{ max-width:760px; display:block }
-.hero--voll h1{ color:var(--paper); font-size:clamp(2.4rem,7vw,5rem);
-  line-height:1.02; letter-spacing:-.04em; text-transform:none }
+.hero--voll h1{ color:var(--paper); font-size:clamp(2.3rem,6.6vw,4.7rem);
+  line-height:1.08; letter-spacing:.005em; text-transform:none }
 .hero--voll h1 s{ color:var(--marke); text-decoration-thickness:.07em }
 .hero--voll h1 sup{ color:var(--gelb); font-size:.42em; top:-.6em; margin-left:.04em }
 
 .hero__stern{ list-style:none; display:flex; flex-wrap:wrap; gap:8px 10px;
   margin:clamp(22px,3vw,34px) 0 0; padding:0 }
-.hero__stern li{ position:relative; padding:9px 16px 9px 30px;
-  background:rgba(243,239,230,.1); border:1px solid rgba(243,239,230,.26);
-  border-radius:var(--rund-s); color:var(--paper);
-  font-size:clamp(.86rem,1.5vw,1rem); font-weight:700; letter-spacing:.02em }
+.hero__stern li{ position:relative; padding:2px 6px 2px 26px;
+  background:none; border:0; color:var(--paper) }
 .hero__stern li::before{ content:'*'; position:absolute; left:13px; top:11px;
   color:var(--gelb); font-weight:900; font-size:1.1em; line-height:1 }
 .hero--voll .hero__act{ margin:clamp(28px,3.4vw,40px) 0 0 }
@@ -1008,17 +1006,20 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 @media (max-width:860px){ .produkt__bilder{ position:static; grid-template-columns:1fr 1fr } }
 @media (max-width:520px){ .produkt__bilder{ grid-template-columns:1fr } }
 
-/* ── Kopfzeile: Claim neben dem Logo (schwarzer Balken entfällt) ── */
-.head__claim{ flex:none; padding-left:16px; margin-left:4px;
-  border-left:1px solid var(--line);
-  font-size:.72rem; font-weight:700; letter-spacing:.1em;
-  text-transform:uppercase; color:var(--muted); white-space:nowrap }
-@media (max-width:760px){ .head__claim{ display:none } }
+/* ── Kopfzeile: Claim dicht am Logo, kursiv wie der Schriftzug ── */
+.head__claim{ flex:none; margin-left:10px; align-self:center;
+  font-size:1.02rem; font-style:italic; font-weight:800;
+  letter-spacing:.01em; line-height:1; color:var(--ink); white-space:nowrap }
+@media (max-width:860px){ .head__claim{ display:none } }
+
+/* Kartenfächer vor den Rallye-Spielen */
+.navlink{ display:inline-flex; align-items:center; gap:7px }
+.navkarten{ flex:none; color:var(--marke); margin-top:-1px }
 
 /* ── Hero: Fahrzeug weiß, roter Wischer von Hand ───────────────── */
 .hero--voll h1 .streich{ position:relative; display:inline-block;
   color:var(--paper) }
-.wischer{ position:absolute; left:-3%; top:52%; width:106%; height:.46em;
+.wischer{ position:absolute; left:-4%; top:38%; width:108%; height:.5em;
   overflow:visible; pointer-events:none }
 .wischer path{ fill:none; stroke:var(--marke); stroke-width:7;
   stroke-linecap:round; vector-effect:non-scaling-stroke;
@@ -1027,11 +1028,15 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 .hero--voll h1 sup{ color:var(--marke) }
 
 /* Kategorien in der Handschrift des Konfigurators, Sterne rot */
+/* Kategorien in Handschrift, Sterne wie der in der Überschrift */
+.hero__stern{ gap:6px 22px }
 .hero__stern li{ font-family:var(--f-hand); font-weight:400;
-  font-size:clamp(1.5rem,3.4vw,2.2rem); letter-spacing:0;
-  padding:4px 18px 8px 34px; line-height:1.1 }
-.hero__stern li::before{ color:var(--marke); top:50%; transform:translateY(-55%);
-  font-size:1.5em }
+  font-size:clamp(1.6rem,3.6vw,2.4rem); letter-spacing:0;
+  padding:0 0 0 26px; line-height:1.15 }
+.hero__stern li::before{ content:'*'; position:absolute; left:0; top:.46em;
+  transform:translateY(-50%);
+  font-family:var(--f-disp); font-size:.58em; font-weight:900;
+  color:var(--marke); line-height:1 }
 /* Nur noch ein Angebotsweg — Kachel mittig statt zweispaltig */
 .wahl__grid{ grid-template-columns:minmax(0,520px); justify-content:center }
 
@@ -1086,3 +1091,19 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 .zahlung__kopf span{ font-size:.68rem; font-weight:800; letter-spacing:.14em;
   text-transform:uppercase; color:var(--muted) }
 #stripe-block{ min-height:420px }
+
+/* ── Produktwahl: Quartett oder nur der Aufsteller ───────────────────── */
+.wahl{ display:grid; gap:8px; margin:0 0 18px }
+.wahl__o{ display:grid; grid-template-columns:auto 1fr auto; align-items:center;
+  gap:12px; padding:12px 14px; background:var(--feld);
+  border:1px solid var(--line); border-radius:var(--rund-s); cursor:pointer }
+.wahl__o:has(input:checked){ border-color:var(--marke);
+  box-shadow:inset 0 0 0 1px var(--marke) }
+.wahl__o input{ width:18px; height:18px; accent-color:var(--marke) }
+.wahl__t b{ display:block; font-size:.98rem }
+.wahl__t i{ display:block; font-style:normal; font-size:.84rem; color:var(--muted) }
+.wahl__p{ font-weight:800; white-space:nowrap }
+
+/* zweiter Weg je Archiveintrag: Karte selbst bauen */
+.qk2__link--bauen{ margin-top:4px; color:var(--muted) }
+.qk2__link--bauen:hover{ color:var(--marke) }

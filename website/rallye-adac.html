@@ -25,10 +25,10 @@
     <a class="head__logo" href="index.html" aria-label="Matthews SuperCards — Startseite">
       <img src="assets/img/logo.png" alt="Matthews SuperCards" width="504" height="101">
     </a>
-    <span class="head__claim">Spielkartenmanufaktur Oldenburg</span>
+    <span class="head__claim">Spielkartenmanufaktur&nbsp;Oldenburg</span>
     <!-- NAV:START -->
     <nav class="nav" aria-label="Hauptnavigation">
-      <a href="rallyes.html" class="is-cur">Rallyes</a>
+      <a href="rallyes.html" class="navlink is-cur"><svg class="navkarten" viewBox="0 0 26 22" width="22" height="19" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3.2" y="5.4" width="9.6" height="14.2" rx="1.6" transform="rotate(-22 8 12.5)"/><rect x="8.4" y="3.2" width="9.6" height="14.6" rx="1.6" transform="rotate(-9 13.2 10.5)"/><rect x="14.6" y="2.2" width="9.6" height="14.8" rx="1.6"/></g></svg>Rallyes</a>
     </nav>
     <!-- NAV:END -->
     <button class="burger" id="burger" aria-expanded="false" aria-controls="mobnav" aria-label="Men&uuml; &ouml;ffnen">
@@ -37,7 +37,7 @@
   </div>
   <!-- MOBNAV:START -->
   <div class="mobnav" id="mobnav" hidden>
-    <a href="rallyes.html" class="is-cur">Rallyes</a>
+    <a href="rallyes.html" class="navlink is-cur"><svg class="navkarten" viewBox="0 0 26 22" width="22" height="19" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3.2" y="5.4" width="9.6" height="14.2" rx="1.6" transform="rotate(-22 8 12.5)"/><rect x="8.4" y="3.2" width="9.6" height="14.6" rx="1.6" transform="rotate(-9 13.2 10.5)"/><rect x="14.6" y="2.2" width="9.6" height="14.8" rx="1.6"/></g></svg>Rallyes</a>
   </div>
   <!-- MOBNAV:END -->
 </header>
@@ -50,7 +50,7 @@
     <div class="produkt__bilder">
       <figure class="produkt__bild">
         <img src="assets/img/q-adac.jpg" alt="Quartettkarte ADAC Westfalen Classic" width="560" height="850">
-        <figcaption>Schuber</figcaption>
+        <figcaption>Dein Schuber</figcaption>
       </figure>
       <figure class="produkt__bild produkt__bild--karte">
         <img src="assets/img/q-adac.jpg" alt="Spielkarte der ADAC Westfalen Classic" width="560" height="851">
@@ -79,11 +79,27 @@
         angefertigte Einzelst&uuml;ck, im passenden Schuber mit deiner pers&ouml;nlichen
         Spielkarte als Aussteller dabei.</p>
 
-      <form class="bestell" id="bestellform" data-preis="29.40" data-aufsteller="7.40" data-artikel="adac">
+      <form class="bestell" id="bestellform" data-preis="29.40"
+            data-aufsteller="5.40" data-solo="7.40" data-artikel="adac">
         <div class="bestell__preis">
-          <span class="bestell__ab">Quartett im Schuber</span>
+          <span class="bestell__ab" id="preistitel">Quartett im Schuber</span>
           <b class="bestell__zahl" id="preis">29,40&nbsp;&euro;</b>
           <span class="bestell__hinweis">zzgl. Versand</span>
+        </div>
+
+        <div class="wahl" id="produktwahl">
+          <label class="wahl__o">
+            <input type="radio" name="produkt" value="quartett" checked>
+            <span class="wahl__t"><b>Quartett im Schuber</b>
+              <i>Das komplette Spiel mit deiner Karte darin</i></span>
+            <span class="wahl__p">29,40&nbsp;&euro;</span>
+          </label>
+          <label class="wahl__o">
+            <input type="radio" name="produkt" value="aufsteller">
+            <span class="wahl__t"><b>Nur der Aufsteller</b>
+              <i>Deine pers&ouml;nliche Karte zum Hinstellen, ohne Spiel</i></span>
+            <span class="wahl__p">7,40&nbsp;&euro;</span>
+          </label>
         </div>
 
         <div class="bestell__reihe">
@@ -105,13 +121,13 @@
         <p class="bestell__klein bestell__klein--oben">Die Lieferanschrift fragen wir im
           n&auml;chsten Schritt bei der Zahlung ab.</p>
 
-        <label class="zusatz">
+        <label class="zusatz" id="zusatzblock">
           <input type="checkbox" id="aufsteller" name="aufsteller" value="1">
           <span class="zusatz__text">
             <b>Aufsteller mit deiner pers&ouml;nlichen Karte</b>
             <span>Deine Spielkarte zum Hinstellen &mdash; als Erinnerung an die Ausfahrt.</span>
           </span>
-          <span class="zusatz__preis">+&nbsp;7,40&nbsp;&euro;</span>
+          <span class="zusatz__preis">+&nbsp;5,40&nbsp;&euro;</span>
         </label>
 
         <p class="bestell__summe">Summe: <b id="summe">29,40&nbsp;&euro;</b>
@@ -140,11 +156,11 @@
         <div class="vorschau2" id="vorschau2" hidden>
           <p class="vorschau2__titel">So wird dein Spiel</p>
           <div class="vorschau2__karten">
-            <figure>
+            <figure id="vs-schuber">
               <img src="assets/img/q-adac.jpg" alt="Schuber">
               <figcaption>Quartett im Schuber</figcaption>
             </figure>
-            <figure class="vorschau2__pers">
+            <figure class="vorschau2__pers" id="vs-pers">
               <img src="assets/img/q-adac.jpg" alt="Deine Spielkarte">
               <span class="vorschau2__band"><b id="vs-nr">&mdash;</b><i id="vs-name">Nachname</i></span>
               <figcaption>Deine pers&ouml;nliche Karte</figcaption>
