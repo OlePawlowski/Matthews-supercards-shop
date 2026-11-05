@@ -424,16 +424,35 @@ reviews: []
         bestell.dataset.artikel = nurAufsteller ? 'aufsteller-' + grundId : grundId;
         if (zusatz) zusatz.hidden = nurAufsteller;
         if (titelF) titelF.textContent = nurAufsteller
-          ? 'Aufsteller mit deiner Karte' : 'Quartett im Schuber';
+          ? 'Nur Aufsteller' : 'Quartett im Schuber';
         if (preisF) preisF.textContent = euroP(einzel);
         var t = $('.vorschau2__titel');
-        if (t) t.textContent = nurAufsteller ? 'So wird dein Aufsteller' : 'So wird dein Spiel';
+        if (t) t.textContent = nurAufsteller ? 'So wird euer Aufsteller' : 'So wird euer Spiel';
         rechne();
       });
     });
     mengeF.addEventListener('change', rechne);
     if (aufF) aufF.addEventListener('change', rechne);
     rechne();
+
+    /* Kommt jemand aus dem Konfigurator, stehen Nachname, Startnummer und
+       E-Mail in der Adresszeile — die Felder sind dann schon ausgefüllt. */
+    (function () {
+      var p = new URLSearchParams(location.search);
+      ['name', 'startnr', 'email'].forEach(function (k) {
+        var wert = (p.get(k) || '').trim();
+        if (!wert) return;
+        var f = bestell.querySelector('[name="' + k + '"]');
+        if (f) f.value = wert.slice(0, 80);
+      });
+      if (p.get('name') || p.get('email')) {
+        var hin = document.createElement('p');
+        hin.className = 'bestell__klein bestell__klein--oben';
+        hin.textContent = 'Eure Angaben aus dem Konfigurator sind übernommen '
+                        + '— bitte kurz prüfen.';
+        bestell.insertBefore(hin, bestell.children[2] || null);
+      }
+    })();
 
     $$('input[inputmode=numeric]', bestell).forEach(function (inp) {
       inp.addEventListener('input', function () {

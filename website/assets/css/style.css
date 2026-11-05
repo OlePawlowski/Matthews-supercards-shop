@@ -164,8 +164,12 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 .nav{ display:flex; gap:clamp(14px,1.7vw,26px); margin-inline:auto }
 .nav a{ position:relative; padding:6px 0; text-decoration:none; font-size:.76rem; font-weight:800;
   letter-spacing:.09em; text-transform:uppercase; white-space:nowrap }
-.nav a::after{ content:''; position:absolute; left:0; bottom:0; width:0; height:2px;
-  background:var(--marke); transition:width .22s var(--fx) }
+.nav a::after{ content:''; position:absolute; left:0; bottom:-1px; width:0; height:5px;
+  background:repeating-linear-gradient(90deg,
+    var(--ink) 0 5px, var(--paper) 5px 10px);
+  background-size:10px 100%;
+  box-shadow:inset 0 0 0 1px rgba(23,22,15,.5);
+  transition:width .22s var(--fx) }
 .nav a:hover::after,.nav a.is-cur::after{ width:100% }
 .head__act{ display:flex; gap:10px; flex:none }
 .head__act .btn--ghost{ --fg:var(--ink) }
@@ -964,16 +968,11 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
    Das Flyer-Motiv füllt den Bildschirm, darüber nur noch die
    Überschrift und die Sternauflistung.                        */
 
-.hero--voll{ position:relative; width:100%; aspect-ratio:1500/1046;
-  min-height:clamp(480px,78vh,700px); max-height:88vh;
+.hero--voll{ position:relative; width:100%;
+  min-height:clamp(500px,80vh,720px);
   display:flex; align-items:flex-end; overflow:hidden; background:var(--ink) }
 .hero__grund{ position:absolute; inset:0; overflow:hidden;
-  background:url('../img/hero-werkstatt.jpg') center/contain no-repeat }
-/* Passt das Seitenverhältnis des Fensters nicht zum Bild, füllt eine
-   unscharfe Vergrößerung die Ränder — so bleibt das Motiv ungeschnitten. */
-.hero__grund::before{ content:''; position:absolute; inset:-6%; z-index:-1;
-  background:url('../img/hero-werkstatt.jpg') center/cover no-repeat;
-  filter:blur(34px) brightness(.5) saturate(.8) }
+  background:url('../img/hero-werkstatt.jpg') center 40%/cover no-repeat }
 /* Abdunklung von unten: die Werkstatt bleibt oben frei, die Schrift steht
    unten im Dunkeln — Karte und Fahrzeug bleiben sichtbar. */
 .hero__grund::after{ content:''; position:absolute; inset:0;
@@ -999,11 +998,8 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
   /* Hochformat: mehr Höhe und kräftigere Abdunklung, sonst steht die
      weiße Schrift auf dem hellen Fahrzeug. */
   /* Hochformat: Bild oben in voller Breite, Schrift darunter im Dunkeln */
-  .hero--voll{ aspect-ratio:auto; min-height:auto; max-height:none;
-    padding-top:calc(100vw / 1.434) }
-  .hero__grund{ background-position:center top }
-  .hero__grund::before{ display:none }
-  .hero--voll .hero__in{ padding-block:22px 26px }
+  .hero--voll{ min-height:clamp(440px,64vh,560px) }
+  .hero__grund{ background-position:38% 40% }
   .hero__grund::after{ background:linear-gradient(to top,
     rgba(14,14,17,.94) 0%, rgba(14,14,17,.84) 34%,
     rgba(14,14,17,.56) 66%, rgba(14,14,17,.26) 100%) }
@@ -1026,8 +1022,8 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 
 /* ── Kopfzeile: Claim dicht am Logo, kursiv wie der Schriftzug ── */
 .head__claim{ flex:none; margin-left:10px; align-self:center;
-  font-size:1.02rem; font-style:italic; font-weight:800;
-  letter-spacing:.01em; line-height:1; color:var(--ink); white-space:nowrap }
+  font-size:1.34rem; font-style:italic; font-weight:300;
+  letter-spacing:.005em; line-height:1; color:var(--ink); white-space:nowrap }
 @media (max-width:860px){ .head__claim{ display:none } }
 
 /* Kartenfächer vor den Rallye-Spielen */
@@ -1039,7 +1035,7 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
   color:var(--paper) }
 .wischer{ position:absolute; left:-4%; top:38%; width:108%; height:.5em;
   overflow:visible; pointer-events:none }
-.wischer path{ fill:none; stroke:var(--marke); stroke-width:7;
+.wischer path{ fill:none; stroke:var(--marke); stroke-width:11;
   stroke-linecap:round; vector-effect:non-scaling-stroke;
   /* leichte Unregelmäßigkeit, damit der Strich gezogen wirkt */
   filter:drop-shadow(0 1px 0 rgba(205,23,25,.55)) }
@@ -1047,13 +1043,13 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 
 /* Kategorien in der Handschrift des Konfigurators, Sterne rot */
 /* Kategorien in Handschrift, Sterne wie der in der Überschrift */
-.hero__stern{ gap:6px 22px }
+.hero__stern{ gap:6px 26px }
 .hero__stern li{ font-family:var(--f-hand); font-weight:400;
   font-size:clamp(1.6rem,3.6vw,2.4rem); letter-spacing:0;
-  padding:0 0 0 26px; line-height:1.15 }
-.hero__stern li::before{ content:'*'; position:absolute; left:0; top:.46em;
+  padding:0 0 0 18px; line-height:1.15 }
+.hero__stern li::before{ content:'*'; position:absolute; left:0; top:.44em;
   transform:translateY(-50%);
-  font-family:var(--f-disp); font-size:.58em; font-weight:900;
+  font-family:var(--f-disp); font-size:.7em; font-weight:900;
   color:var(--marke); line-height:1 }
 /* Nur noch ein Angebotsweg — Kachel mittig statt zweispaltig */
 .wahl__grid{ grid-template-columns:minmax(0,520px); justify-content:center }
@@ -1125,3 +1121,6 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 /* zweiter Weg je Archiveintrag: Karte selbst bauen */
 .qk2__link--bauen{ margin-top:4px; color:var(--muted) }
 .qk2__link--bauen:hover{ color:var(--marke) }
+
+/* Komma rückt dicht an das Wort, der Stern steht hochgestellt davor */
+.hero--voll h1 .kom{ margin-left:-.06em }
