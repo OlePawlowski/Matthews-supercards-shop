@@ -965,14 +965,16 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
    Überschrift und die Sternauflistung.                        */
 
 .hero--voll{ position:relative; min-height:clamp(520px,84vh,760px);
-  display:flex; align-items:center; overflow:hidden; background:var(--ink) }
+  display:flex; align-items:flex-end; overflow:hidden; background:var(--ink) }
 .hero__grund{ position:absolute; inset:0;
-  background:url('../img/flyer-cards.jpg') center/cover no-repeat }
+  background:url('../img/hero-werkstatt.jpg') center 42%/cover no-repeat }
+/* Abdunklung von unten: die Werkstatt bleibt oben frei, die Schrift steht
+   unten im Dunkeln — Karte und Fahrzeug bleiben sichtbar. */
 .hero__grund::after{ content:''; position:absolute; inset:0;
-  background:linear-gradient(100deg, rgba(14,14,17,.88) 0%, rgba(14,14,17,.72) 46%,
-    rgba(14,14,17,.34) 100%) }
-.hero--voll .hero__in{ position:relative; display:block;
-  padding-block:clamp(48px,7vw,96px) }
+  background:linear-gradient(to top, rgba(14,14,17,.90) 0%, rgba(14,14,17,.74) 26%,
+    rgba(14,14,17,.34) 54%, rgba(14,14,17,.10) 100%) }
+.hero--voll .hero__in{ position:relative; display:block; width:100%;
+  padding-block:clamp(56px,9vw,104px) clamp(36px,5vw,62px) }
 .hero--voll .hero__copy{ max-width:760px; display:block }
 .hero--voll h1{ color:var(--paper); font-size:clamp(2.3rem,6.6vw,4.7rem);
   line-height:1.08; letter-spacing:.005em; text-transform:none }
@@ -988,7 +990,13 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 .hero--voll .hero__act{ margin:clamp(28px,3.4vw,40px) 0 0 }
 
 @media (max-width:860px){
-  .hero--voll{ min-height:auto }
+  /* Hochformat: mehr Höhe und kräftigere Abdunklung, sonst steht die
+     weiße Schrift auf dem hellen Fahrzeug. */
+  .hero--voll{ min-height:clamp(420px,66vh,560px) }
+  .hero__grund{ background-position:34% 45% }
+  .hero__grund::after{ background:linear-gradient(to top,
+    rgba(14,14,17,.94) 0%, rgba(14,14,17,.84) 34%,
+    rgba(14,14,17,.56) 66%, rgba(14,14,17,.26) 100%) }
   .hero--voll .hero__copy{ display:block }
   .hero--voll .hero__act .btn{ width:100% }
 }
