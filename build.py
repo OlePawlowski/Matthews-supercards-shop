@@ -18,9 +18,9 @@ ZIEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'website')
 # Preise in Euro (brutto). TODO Kunde: für ADAC bestätigen.
 PREIS       = {'creme21': 29.40, 'adac': 29.40}
 # Aufsteller mit personalisierter Karte — als Zusatz wählbar
-PREIS_AUFST = {'creme21':  5.40, 'adac':  5.40}
+PREIS_AUFST = {'creme21':  7.90, 'adac':  7.90}
 # Derselbe Aufsteller einzeln, ohne Quartett
-PREIS_AUFST_SOLO = 7.40
+PREIS_AUFST_SOLO = 7.90
 # Die Spielkarte selbst — neben dem Schuber auf der Produktseite
 KARTE       = {'creme21': 'karte-creme21.png', 'adac': 'q-adac.jpg'}
 
@@ -449,15 +449,84 @@ def rallye_uebersicht():
         for g in GENERATOREN)) + fuss()
 
 
+
+# Werbetext der Produktseite, je Rallye. Fehlt ein Eintrag, steht der
+# sachliche Standardtext in rallye_seite().
+# TODO Kunde: Sammelbestellschluss eintragen (steht unten als [Datum]).
+WERBETEXT = {
+    'creme21': dict(
+        lead='Was f&uuml;r eine genial schrillsch&ouml;ne Zeit auf der Stra&szlig;e! Die '
+             'Kilometer sind gefahren, der Staub der Rallye hat sich gelegt, aber die '
+             'Erinnerungen an die diesj&auml;hrige Creme 21 Youngtimer Rallye bleiben '
+             'unvergesslich.',
+        absatz='Ihr habt w&auml;hrend der Rallye online die Spielkarte f&uuml;r euren '
+               'Klassiker erstellt &mdash; und jetzt bringen wir das Ganze auf den '
+               'K&uuml;chentisch! Holt euch das Creme 21 Jubil&auml;umsquartett mit den '
+               'echten Autos eurer Mitstreiter!',
+        punkte=[
+            ('Euer Auto mittendrin', 'Eure Youngtimer als stolze Quartettkarte.'),
+            ('Das handgefertigte Einzelst&uuml;ck',
+             'Gedruckt in bester Qualit&auml;t als bleibende Erinnerung.'),
+            ('Das ultimative Treffen nach dem Treffen',
+             'Wer schl&auml;gt wen beim Hubraum, bei den PS oder dem Baujahr?'),
+        ],
+        schluss='Schwelgt in Erinnerungen und stecht eure Rallye-Kollegen beim '
+                'n&auml;chsten Spieleabend aus!',
+        gruss='Mit motorsportlichen (und herrlich orangenen) Gr&uuml;&szlig;en,<br>'
+              'das Team von Matthews SuperCards',
+        aufsteller_titel='Das Highlight f&uuml;r den Schreibtisch',
+        aufsteller='Damit der eigene Klassiker nicht im Kartendeck verschwindet, '
+                   'k&ouml;nnt ihr eure pers&ouml;nliche Spielkarte auch als hochwertigen '
+                   'Aufsteller f&uuml;r nur %(aufstDE)s&nbsp;&euro; dazubestellen! Ob im '
+                   'B&uuml;ro, in der Garage oder im Wohnzimmer &mdash; so habt ihr das '
+                   'Prachtst&uuml;ck immer perfekt im Blick und holt die sch&ouml;nsten '
+                   'Rallye-Momente jeden Tag aufs Neue zur&uuml;ck in den Alltag.',
+        frist='Da es sich um eine exklusive Sonderanfertigung f&uuml;r uns Mitfahrer '
+              'handelt, sammeln wir die Bestellungen bis zum [Datum]. Danach geht euer '
+              'Spiel in den Druck und wird versandt.',
+    ),
+}
+
 # ── Produktseite je Rallye ───────────────────────────────────────────────
+
+def werbeblock(sid, aufst):
+    """Werbetext der Rallye; ohne eigenen Text der sachliche Standard."""
+    t = WERBETEXT.get(sid)
+    aufstDE = ('%.2f' % aufst).replace('.', ',')
+    if not t:
+        return ('<p class="sec__lead">Hier bestellt ihr euer eigenes Spiel. Das '
+                'f&uuml;r euch angefertigte Einzelst&uuml;ck, im passenden Schuber '
+                'mit eurer pers&ouml;nlichen Spielkarte als Aussteller dabei.</p>')
+
+    punkte = '\n'.join(
+        '        <li><b>%s:</b> %s</li>' % (kopfz, text)
+        for kopfz, text in t['punkte'])
+
+    return ('<p class="sec__lead">%(lead)s</p>\n'
+            '      <p class="werb__abs">%(absatz)s</p>\n'
+            '      <ul class="werb__punkte">\n%(punkte)s\n      </ul>\n'
+            '      <p class="werb__abs">%(schluss)s</p>\n'
+            '      <p class="werb__gruss">%(gruss)s</p>\n'
+            '      <div class="werb__kasten">\n'
+            '        <h2 class="werb__kh">%(atitel)s</h2>\n'
+            '        <p>%(auf)s</p>\n'
+            '      </div>\n'
+            '      <p class="werb__frist"><b>Hinweis:</b> %(frist)s</p>'
+            % dict(lead=t['lead'], absatz=t['absatz'], punkte=punkte,
+                   schluss=t['schluss'], gruss=t['gruss'],
+                   atitel=t['aufsteller_titel'],
+                   auf=t['aufsteller'] % dict(aufstDE=aufstDE),
+                   frist=t['frist']))
+
 
 def rallye_seite(sid):
     k = KONFIGURATOREN[sid]
     q = next(x for x in QUARTETTE if x['konf'] == sid)
     preis   = PREIS.get(sid, 34.80)
     karte   = KARTE.get(sid, q['bild'])
-    aufst   = PREIS_AUFST.get(sid, 5.40)
+    aufst   = PREIS_AUFST.get(sid, 7.90)
     solo    = PREIS_AUFST_SOLO
+    werbung = werbeblock(sid, aufst)
     mengen = '\n'.join(
         '              <option value="%d"%s>%d&nbsp;Spiel%s</option>'
         % (n, ' selected' if n == 1 else '', n, '' if n == 1 else 'e')
@@ -497,9 +566,7 @@ def rallye_seite(sid):
       </p>
       <h1>%(titel)s</h1>
       <p class="produkt__unter">%(unter)s &middot; Ausgabe %(jahr)s</p>
-      <p class="sec__lead">Hier bestellt ihr euer eigenes Spiel. Das f&uuml;r euch
-        angefertigte Einzelst&uuml;ck, im passenden Schuber mit eurer pers&ouml;nlichen
-        Spielkarte als Aussteller dabei.</p>
+      %(werbung)s
 
       <form class="bestell" id="bestellform" data-preis="%(preis).2f"
             data-aufsteller="%(aufst).2f" data-solo="%(solo).2f" data-artikel="%(sid)s">
@@ -636,7 +703,8 @@ def rallye_seite(sid):
       <a href="archiv.html">Archiv ansehen &rarr;</a></p>
   </div>
 </section>
-''' % dict(solo=solo, soloDE=('%.2f' % solo).replace('.', ','),
+''' % dict(werbung=werbung, solo=solo,
+           soloDE=('%.2f' % solo).replace('.', ','),
            bild=q['bild'], alt=e('Quartettkarte ' + q['titel']), titel=e(k['name']),
            unter=e(q['unter']), jahr=e(k['jahr']), besch=e(q['text']),
            start=e(k['start']), kurl=k['url'], kurld=direkt(k['url']), kname=e(k['kurz']),

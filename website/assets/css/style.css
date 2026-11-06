@@ -1124,3 +1124,21 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 
 /* Komma rückt dicht an das Wort, der Stern steht hochgestellt davor */
 .hero--voll h1 .kom{ margin-left:-.06em }
+
+/* ── Werbetext der Produktseite ──────────────────────────────────────── */
+.werb__abs{ margin:0 0 14px; color:var(--ink); line-height:1.62 }
+.werb__punkte{ list-style:none; margin:0 0 18px; padding:0; display:grid; gap:9px }
+.werb__punkte li{ position:relative; padding-left:26px; line-height:1.55 }
+.werb__punkte li::before{ content:'*'; position:absolute; left:2px; top:.42em;
+  transform:translateY(-50%); font-family:var(--f-disp); font-size:1.25em;
+  font-weight:900; color:var(--marke); line-height:1 }
+.werb__gruss{ margin:0 0 22px; font-family:var(--f-hand);
+  font-size:clamp(1.3rem,2.4vw,1.7rem); line-height:1.3; color:var(--ink) }
+.werb__kasten{ margin:0 0 18px; padding:clamp(16px,2.2vw,22px);
+  background:var(--surface-2); border:1px solid var(--line);
+  border-left:4px solid var(--marke); border-radius:var(--rund-s) }
+.werb__kh{ margin:0 0 8px; font-size:clamp(1rem,1.6vw,1.16rem);
+  letter-spacing:.01em; text-transform:none }
+.werb__kasten p{ margin:0; line-height:1.6 }
+.werb__frist{ margin:0 0 24px; font-size:.88rem; color:var(--muted);
+  line-height:1.55 }

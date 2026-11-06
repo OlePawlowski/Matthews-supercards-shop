@@ -30,16 +30,16 @@ STRIPE_API = 'https://api.stripe.com/v1/checkout/sessions'
 # cent = Quartett im Schuber, cent_aufsteller = Zusatz mit persönlicher Karte
 ARTIKEL = {
     'creme21': dict(name='Creme 21 Youngtimer Rallye 2026 — Quartett im Schuber',
-                    cent=2940, cent_aufsteller=540),
+                    cent=2940, cent_aufsteller=790),
     'adac':    dict(name='ADAC Westfalen Classic 2026 — Quartett im Schuber',
-                    cent=2940, cent_aufsteller=540),
+                    cent=2940, cent_aufsteller=790),
     # Derselbe Aufsteller einzeln, ohne Quartett
     'aufsteller-creme21': dict(
         name='Creme 21 Youngtimer Rallye 2026 — Aufsteller mit persönlicher Spielkarte',
-        cent=740, cent_aufsteller=0),
+        cent=790, cent_aufsteller=0),
     'aufsteller-adac': dict(
         name='ADAC Westfalen Classic 2026 — Aufsteller mit persönlicher Spielkarte',
-        cent=740, cent_aufsteller=0),
+        cent=790, cent_aufsteller=0),
 }
 VERSAND_CENT = 495
 MAX_MENGE = 10
