@@ -950,10 +950,10 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 
 .btn,.filt,.vbtn{ border-radius:var(--rund-s) }
 .prod,.wahl__weg,.qk2,.rk,.ablauf__s,.rez,.b2b__form,.bestell,
-.konf__screen,.produkt__bild,.kopfsec,.gen{ border-radius:var(--rund) }
+.konf__screen,.pkar__spur,.kopfsec,.gen{ border-radius:var(--rund) }
 .wahl__bild,.prod__stage,.rk__bild,.qk2__bild,.ablauf__s figure{
   border-radius:var(--rund) var(--rund) 0 0 }
-.hero__fig img,.craft__fig img,.matthias__card img,.produkt__bild img,
+.hero__fig img,.craft__fig img,.matthias__card img,.pkar__bild img,
 .qk2__bild img,.rk__bild img,.ablauf__s img{ border-radius:var(--rund-s) }
 .vfeld input[type=text],.vfeld select,.bestell textarea,.b2b__form select,
 .b2b__form textarea,.vfeld--menge select{ border-radius:var(--rund-s) }
@@ -1008,17 +1008,6 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 }
 /* Das leere Band bleibt als farbiger Trenner stehen */
 .tape span:empty{ padding-block:13px }
-
-/* ── Produktseite: Schuber und Spielkarte nebeneinander ───────── */
-.produkt__bilder{ position:sticky; top:100px; display:grid; gap:14px }
-.produkt__bild{ margin:0; padding:clamp(16px,2.2vw,26px); background:var(--surface-2);
-  border:1px solid var(--line); display:grid; place-items:center; position:static }
-.produkt__bild img{ width:100%; height:auto; box-shadow:0 16px 34px rgba(23,22,15,.22) }
-.produkt__bild figcaption{ margin-top:12px; font-size:.66rem; font-weight:800;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--muted) }
-@media (min-width:861px){ .produkt__bilder{ grid-template-columns:1fr 1fr } }
-@media (max-width:860px){ .produkt__bilder{ position:static; grid-template-columns:1fr 1fr } }
-@media (max-width:520px){ .produkt__bilder{ grid-template-columns:1fr } }
 
 /* ── Kopfzeile: Claim dicht am Logo, kursiv wie der Schriftzug ── */
 .head__claim{ flex:none; margin-left:10px; align-self:center;
@@ -1142,3 +1131,37 @@ p{ margin:0 0 1em } p:last-child{ margin-bottom:0 }
 .werb__kasten p{ margin:0; line-height:1.6 }
 .werb__frist{ margin:0 0 24px; font-size:.88rem; color:var(--muted);
   line-height:1.55 }
+
+/* ── Produktbilder: ein Karussell statt zweier Bilder ────────────────── */
+.pkar{ position:relative; align-self:start }
+@media (min-width:861px){ .pkar{ position:sticky; top:100px } }
+.pkar__spur{ display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+  scroll-behavior:smooth; gap:0; scrollbar-width:none;
+  border:1px solid var(--line); border-radius:var(--rund-s);
+  background:var(--surface-2) }
+.pkar__spur::-webkit-scrollbar{ display:none }
+.pkar__bild{ flex:0 0 100%; scroll-snap-align:center; margin:0;
+  padding:clamp(18px,2.6vw,30px); display:grid; place-items:center }
+.pkar__bild img{ width:100%; max-width:380px; height:auto;
+  box-shadow:0 16px 34px rgba(23,22,15,.22) }
+.pkar__bild figcaption{ margin-top:14px; font-size:.66rem; font-weight:800;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--muted) }
+
+.pkar__pfeil{ position:absolute; top:50%; transform:translateY(-50%);
+  width:38px; height:38px; display:grid; place-items:center;
+  border:1px solid var(--line); border-radius:50%; cursor:pointer;
+  background:var(--paper); color:var(--ink); font-size:1rem; line-height:1;
+  box-shadow:0 4px 14px rgba(23,22,15,.14); transition:background .2s }
+.pkar__pfeil:hover{ background:var(--surface) }
+.pkar__pfeil--zur{ left:-14px } .pkar__pfeil--vor{ right:-14px }
+.pkar__pfeil[disabled]{ opacity:.3; cursor:default }
+
+.pkar__punkte{ display:flex; justify-content:center; gap:8px; margin-top:14px }
+.pkar__punkte button{ width:9px; height:9px; padding:0; border-radius:50%;
+  border:1px solid var(--muted); background:none; cursor:pointer }
+.pkar__punkte button[aria-selected=true]{ background:var(--marke);
+  border-color:var(--marke) }
+
+/* Der Aufsteller hängt sichtbar am Quartett darüber */
+.wahl .zusatz{ margin:-4px 0 0; margin-left:26px;
+  border-top-left-radius:0; border-top-right-radius:0 }

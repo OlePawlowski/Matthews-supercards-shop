@@ -538,15 +538,24 @@ def rallye_seite(sid):
 <section class="sec produkt" id="bestellen">
   <div class="wrap produkt__in">
 
-    <div class="produkt__bilder">
-      <figure class="produkt__bild">
-        <img src="assets/img/%(bild)s" alt="%(alt)s" width="560" height="850">
-        <figcaption>Euer Schuber</figcaption>
-      </figure>
-      <figure class="produkt__bild produkt__bild--karte">
-        <img src="assets/img/%(karte)s" alt="Spielkarte der %(kurz)s" width="560" height="851">
-        <figcaption>Eure Spielkarte</figcaption>
-      </figure>
+    <div class="pkar" id="pkar">
+      <div class="pkar__spur" id="pkarspur">
+        <figure class="pkar__bild">
+          <img src="assets/img/%(bild)s" alt="%(alt)s" width="560" height="850">
+          <figcaption>Euer Schuber</figcaption>
+        </figure>
+        <figure class="pkar__bild pkar__bild--karte">
+          <img src="assets/img/%(karte)s" alt="Spielkarte der %(kurz)s"
+               width="560" height="851" loading="lazy">
+          <figcaption>Eure Spielkarte</figcaption>
+        </figure>
+      </div>
+      <button type="button" class="pkar__pfeil pkar__pfeil--zur" id="pkarzur"
+              aria-label="Vorheriges Bild">&larr;</button>
+      <button type="button" class="pkar__pfeil pkar__pfeil--vor" id="pkarvor"
+              aria-label="N&auml;chstes Bild">&rarr;</button>
+      <div class="pkar__punkte" id="pkarpunkte" role="tablist"
+           aria-label="Bilder"></div>
     </div>
 
     <div class="produkt__text">
@@ -583,6 +592,14 @@ def rallye_seite(sid):
               <i>Das komplette Spiel mit eurer Karte darin</i></span>
             <span class="wahl__p">%(preisDE)s&nbsp;&euro;</span>
           </label>
+          <label class="zusatz" id="zusatzblock">
+            <input type="checkbox" id="aufsteller" name="aufsteller" value="1">
+            <span class="zusatz__text">
+              <b>&hellip; und Aufsteller mit eurer pers&ouml;nlichen Karte</b>
+              <span>Eure Spielkarte zum Hinstellen &mdash; als Erinnerung an die Ausfahrt.</span>
+            </span>
+            <span class="zusatz__preis">+&nbsp;%(aufstDE)s&nbsp;&euro;</span>
+          </label>
           <label class="wahl__o">
             <input type="radio" name="produkt" value="aufsteller">
             <span class="wahl__t"><b>Nur Aufsteller</b>
@@ -609,15 +626,6 @@ def rallye_seite(sid):
         </div>
         <p class="bestell__klein bestell__klein--oben">Die Lieferanschrift fragen wir im
           n&auml;chsten Schritt bei der Zahlung ab.</p>
-
-        <label class="zusatz" id="zusatzblock">
-          <input type="checkbox" id="aufsteller" name="aufsteller" value="1">
-          <span class="zusatz__text">
-            <b>&hellip; und Aufsteller mit eurer pers&ouml;nlichen Karte</b>
-            <span>Eure Spielkarte zum Hinstellen &mdash; als Erinnerung an die Ausfahrt.</span>
-          </span>
-          <span class="zusatz__preis">+&nbsp;%(aufstDE)s&nbsp;&euro;</span>
-        </label>
 
         <p class="bestell__summe">Summe: <b id="summe">%(preisDE)s&nbsp;&euro;</b>
           <span id="summehinweis">zzgl. Versand</span></p>

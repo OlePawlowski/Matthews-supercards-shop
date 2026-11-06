@@ -380,6 +380,60 @@ reviews: []
     setze('', null);
   }
 
+  /* ── Produktbilder: Karussell ────────────────────────────────────────
+     Eine Spur mit Scroll-Snap; Pfeile und Punkte bedienen dieselbe Spur,
+     damit Wischen auf dem Telefon und Klicken am Rechner übereinstimmen. */
+  var pkar = $('#pkar');
+  if (pkar) {
+    var spur   = $('#pkarspur');
+    var bilder = $$('.pkar__bild', spur);
+    var punkte = $('#pkarpunkte');
+    var zur    = $('#pkarzur'), vor = $('#pkarvor');
+
+    if (bilder.length < 2) {
+      zur.hidden = vor.hidden = punkte.hidden = true;
+    } else {
+      var knoepfe = bilder.map(function (b, i) {
+        var k = document.createElement('button');
+        k.type = 'button';
+        k.setAttribute('role', 'tab');
+        k.setAttribute('aria-label', 'Bild ' + (i + 1));
+        k.addEventListener('click', function () { zeige(i); });
+        punkte.appendChild(k);
+        return k;
+      });
+
+      var jetzt = 0;
+      var zeige = function (i) {
+        i = Math.max(0, Math.min(bilder.length - 1, i));
+        spur.scrollTo({ left: bilder[i].offsetLeft - spur.offsetLeft,
+                        behavior: reduced ? 'auto' : 'smooth' });
+      };
+      var merke = function () {
+        var mitte = spur.scrollLeft + spur.clientWidth / 2;
+        var nah = 0, abstand = Infinity;
+        bilder.forEach(function (b, i) {
+          var d = Math.abs((b.offsetLeft - spur.offsetLeft)
+                           + b.offsetWidth / 2 - mitte);
+          if (d < abstand) { abstand = d; nah = i; }
+        });
+        jetzt = nah;
+        knoepfe.forEach(function (k, i) {
+          k.setAttribute('aria-selected', i === jetzt ? 'true' : 'false');
+        });
+        zur.disabled = (jetzt === 0);
+        vor.disabled = (jetzt === bilder.length - 1);
+      };
+      spur.addEventListener('scroll', function () {
+        clearTimeout(spur._t);
+        spur._t = setTimeout(merke, 90);
+      });
+      zur.addEventListener('click', function () { zeige(jetzt - 1); });
+      vor.addEventListener('click', function () { zeige(jetzt + 1); });
+      merke();
+    }
+  }
+
   /* ── Bestellformular ──────────────────────────────────────────────────
      Ohne Backend wird eine vorbereitete E-Mail geöffnet; für den Livegang
      durch einen Server-Endpunkt mit Bestellnummer ersetzen (siehe README). */
